@@ -1,0 +1,8 @@
+*.md
+.git*
+.env*
+node_modules
+out
+Dockerfile
+.dockerignore
+*.j2

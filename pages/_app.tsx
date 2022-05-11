@@ -13,7 +13,7 @@ import '@/styles/theme.scss'
 import '@/public/fonts/ClashDisplay/clash-display.css'
 
 // @ts-ignore
-import withGA from "next-ga"
+// import withGA from "next-ga"
 
 import defaultTheme from "../styles/theme"
 
@@ -43,4 +43,4 @@ function App(props: AppProps) {
   )
 }
 
-export default withGA(process.env.NEXT_PUBLIC_GA_ID, Router)(App)
+// export default withGA(process.env.NEXT_PUBLIC_GA_ID, Router)(App)
