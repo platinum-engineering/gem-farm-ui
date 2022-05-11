@@ -38,12 +38,14 @@ const CollectionItem = (props: Props) => {
     }
 
   return (
-  <img
-  className={className}
-  src={externalMetadata.image}
-  alt="NFT"
-  onClick={handleOnClick(item)}
-  />
+  <div className={className}>
+    <img
+    src={externalMetadata.image}
+    alt="NFT"
+    onClick={handleOnClick(item)}
+    />
+    <div>{externalMetadata.name}</div>
+  </div>
   )
 
   return (

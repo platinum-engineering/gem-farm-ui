@@ -81,6 +81,7 @@ const useGemFarmStaking = (farmId: string) => {
 
           const farmAcc = await farmClient.fetchFarmAcc(new PublicKey(farmId))
           setFarmAccount(farmAcc as any)
+          console.log('useGemFarmStaking:', { farmAcc })
 
           await fetchFarmerAccount(farmClient, bankClient)
         } catch (e) {
@@ -361,6 +362,7 @@ const useGemFarmStaking = (farmId: string) => {
 
   return {
     walletNFTs,
+    farmAccount,
     farmerAccount,
     farmerVaultAccount,
     farmerStatus,

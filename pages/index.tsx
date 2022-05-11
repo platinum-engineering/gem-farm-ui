@@ -6,7 +6,6 @@ import { Flex, Text, Heading, Spinner, Button, Container } from "theme-ui"
 import CollectionItem from "@/components/CollectionItem/CollectionItem"
 import useGemFarmStaking from "hooks/useGemFarmStaking"
 import { useWallet } from "@solana/wallet-adapter-react"
-// import { LoadingIcon } from "@/components/icons/LoadingIcon"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
@@ -15,11 +14,12 @@ import { LoadingIcon } from "@/components/icons/LoadingIcon"
 import s from '../styles/index.page.module.scss'
 
 const StakePage = () => {
-  const [farmId, setFarmId] = useState(process.env.NEXT_PUBLIC_GEMFARM_ID || "")
+  const [farmId] = useState(process.env.NEXT_PUBLIC_GEMFARM_ID || "")
   const [walletNFTsFiltered, setWalletNFTsFiltered] = useState([])
 
   const {
     walletNFTs,
+    farmAccount,
     farmerAccount,
     farmerVaultAccount,
     farmerStatus,
@@ -56,6 +56,7 @@ const StakePage = () => {
     console.log('StakePage:', {
       farmId,
       walletNFTs,
+      farmAccount,
       farmerAccount,
       farmerVaultAccount,
       farmerStatus,
@@ -165,10 +166,16 @@ const StakePage = () => {
 
         {!!publicKey && !!farmerAccount && farmerAccount?.identity &&
         <div className={s.containerStaking}>
+          <div className={s.buttons}>
+            <button>TESTNET</button>
+            <WalletMultiButton className={s.button}>
+              PHANTOM
+            </WalletMultiButton>
+          </div>
           <div className={s.form}>
             <img className={s.nft} src="/images/nft.png" alt="NFT"/>
-            <p>Staked farmer count: 349</p>
-            <h1 className={s.h1}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h1>
+            <p>Staked farmer count: {farmAccount?.stakedFarmerCount?.toNumber() || 0}</p>
+            <h1 className={s.h1}>Astro Babies Staked: {farmAccount?.gemsStaked?.toNumber() || 0}</h1>
             <div className={s.description}>
               Select your Astro Babies and move them into "Your Stake", lock and start to begin staking
             </div>
@@ -185,7 +192,7 @@ const StakePage = () => {
                   )
                   return (
                   <CollectionItem
-                  className={isSelected ? s.nftsGalleryItemSelected : s.nftsGalleryItem}
+                  className={`${s.nftsGalleryItem} ${!!isSelected && s.nftsGalleryItemSelected}`}
                   key={item.onchainMetadata.mint}
                   item={item}
                   onClick={!isLocked ? handleWalletItemClick : () => true}
@@ -197,25 +204,27 @@ const StakePage = () => {
               </div>
             </section>
             <div className={s.arrows}>
-              {selectedVaultItems?.length ? (
-              <>
-                {!isLocked ? (
+              <div>
+                {selectedVaultItems?.length ? (
+                <>
+                  {!isLocked ? (
+                  <img
+                  src="/images/arrow-left.svg"
+                  alt="left"
+                  onClick={handleMoveToWalletButtonClick}
+                  />
+                  ) : null}
+                </>
+                ) : null}
+
+                {selectedWalletItems?.length && !isLocked ? (
                 <img
-                src="/images/arrow-left.svg"
-                alt="left"
-                onClick={handleMoveToWalletButtonClick}
+                src="/images/arrow-right.svg"
+                alt="right"
+                onClick={handleMoveToVaultButtonClick}
                 />
                 ) : null}
-              </>
-              ) : null}
-
-              {selectedWalletItems?.length && !isLocked ? (
-              <img
-              src="/images/arrow-right.svg"
-              alt="right"
-              onClick={handleMoveToVaultButtonClick}
-              />
-              ) : null}
+              </div>
             </div>
             <section className={s.sectionNfts}>
               <h1>Your stake</h1>
@@ -228,7 +237,7 @@ const StakePage = () => {
                   )
                   return (
                   <CollectionItem
-                  className={isSelected ? s.nftsGalleryItemSelected : s.nftsGalleryItem}
+                  className={`${s.nftsGalleryItem} ${!!isSelected && s.nftsGalleryItemSelected}`}
                   key={item.onchainMetadata.mint}
                   item={item}
                   onClick={!isLocked ? handleVaultItemClick : () => true}
@@ -242,28 +251,24 @@ const StakePage = () => {
           </div>
           <div className={s.buttons}>
 
+            {farmerStatus === "unstaked" &&
             <button
             onClick={handleStakeButtonClick}
-            disabled={
-              !(farmerStatus === "unstaked" && farmerVaultNFTs?.length)
-            }
+            disabled={!farmerVaultNFTs?.length}
             >
               Begin staking
             </button>
+            }
 
+            {!!(farmerStatus === "staked" || farmerStatus === "pendingCooldown") &&
             <button
             onClick={handleUnstakeButtonClick}
-            disabled={
-              !(
-              farmerStatus === "staked" ||
-              farmerStatus === "pendingCooldown"
-              )
-            }
             >
               {farmerStatus === "pendingCooldown"
               ? "End cooldown"
               : "End staking"}
             </button>
+            }
 
             <button
             onClick={handleClaimButtonClick}
@@ -272,57 +277,6 @@ const StakePage = () => {
               CLAIM {availableToClaim}
             </button>
 
-          </div>
-        </div>
-        }
-
-        {!!publicKey && !!farmerAccount && farmerAccount?.identity && !!farmerAccount?.gemsStaked?.toNumber() &&
-        <div className={s.containerStaking}>
-          <div className={s.buttons}>
-            <button>TESTNET</button>
-            <WalletMultiButton
-            className={s.button}
-            onClick={() => setMode('home')}
-            >
-              PHANTOM
-            </WalletMultiButton>
-          </div>
-          <div className={s.form}>
-            <img className={s.nft} src="/images/nft.png" alt="NFT"/>
-            <p>Staked farmer count: 349</p>
-            <h1 className={s.h1}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h1>
-            <div className={s.description}>
-              Select your Astro Babies and move them into "Your Stake", lock and start to begin staking
-            </div>
-          </div>
-          <div className={s.nftsClaiming}>
-            <section className={s.sectionNfts}>
-              <h1>Your wallet</h1>
-              <div className={s.nftsGallery}>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-              </div>
-            </section>
-            <section className={s.sectionNfts}>
-              <h1>Your stake</h1>
-              <div className={s.nftsGallery}>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-              </div>
-            </section>
-          </div>
-          <div className={s.buttons}>
-            <button onClick={() => setMode('claiming')}>End Staking</button>
-            <button
-            onClick={handleClaimButtonClick}
-            disabled={!Number(availableA)}
-            >
-              CLAIM {availableToClaim}
-            </button>
           </div>
         </div>
         }

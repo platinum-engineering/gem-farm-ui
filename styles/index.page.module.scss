@@ -161,18 +161,26 @@
 }
 
 .nftsGalleryItem {
-  width: 180px;
-  height: 180px;
-  object-fit: cover;
-  cursor: pointer;
+  position: relative;
+  img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  > div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(40, 48, 61, 0.5);
+    text-align: center;
+  }
 }
 
 .nftsGalleryItemSelected {
-  border: 2px solid white;
-  width: 180px;
-  height: 180px;
-  object-fit: cover;
-  cursor: pointer;
+  img {
+    border: 2px solid white;
+  }
 }
 
 .containerStaking {
@@ -182,13 +190,14 @@
 
 .arrows {
   @include flex(row, center, center, nowrap, 20px);
+  > div {
+    @include b(tablet) {
+      transform: rotate(90deg);
+    }
+  }
   img {
     width: 30px;
     cursor: pointer;
-  }
-
-  @include b(tablet) {
-    transform: rotate(90deg);
   }
 }
 
