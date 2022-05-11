@@ -12,7 +12,7 @@
 }
 
 .sectionStaking {
-  @include flex(column, center, normal, nowrap, 16px);
+  @include flex(column, center, normal, nowrap, 24px);
   position: relative;
   color: $color-text;
   background-color: $color-bg-section;
@@ -20,6 +20,15 @@
   max-width: 1280px;
   width: 100%;
   padding: 24px;
+}
+
+.status {
+  @include flex(row, center, center, wrap, 40px);
+  font-size: 24px;
+  line-height: 30px;
+  span {
+    text-transform: capitalize;
+  }
 }
 
 .sectionNfts {
@@ -149,12 +158,21 @@
   @include flex(row, center, center, wrap, 16px);
   max-height: 450px;
   overflow: auto;
+}
 
-  img {
-    width: 180px;
-    height: 180px;
-    object-fit: cover;
-  }
+.nftsGalleryItem {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.nftsGalleryItemSelected {
+  border: 2px solid white;
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  cursor: pointer;
 }
 
 .containerStaking {
@@ -172,4 +190,16 @@
   @include b(tablet) {
     transform: rotate(90deg);
   }
+}
+
+.variableReward {
+  color: $color-text-secondary;
+  font-size: 24px;
+  line-height: 30px;
+}
+
+.rewards {
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: bold;
 }

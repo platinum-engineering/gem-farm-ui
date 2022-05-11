@@ -26,7 +26,7 @@ async function getNFTMetadata(
       externalMetadata,
     }
   } catch (e) {
-    console.log(`failed to pull metadata for token ${mint}`)
+    // console.log(`failed to pull metadata for token ${mint}`)
   }
 }
 

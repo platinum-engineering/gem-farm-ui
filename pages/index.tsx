@@ -1,4 +1,6 @@
 /** @jsxImportSource theme-ui */
+import React, { useCallback, useEffect, useState, useMemo } from "react"
+
 import { Flex, Text, Heading, Spinner, Button, Container } from "theme-ui"
 
 import CollectionItem from "@/components/CollectionItem/CollectionItem"
@@ -10,11 +12,11 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
 import Header from "@/components/Header/Header"
 import { LoadingIcon } from "@/components/icons/LoadingIcon"
-import { useState } from "react"
 import s from '../styles/index.page.module.scss'
 
 const StakePage = () => {
   const [farmId, setFarmId] = useState(process.env.NEXT_PUBLIC_GEMFARM_ID || "")
+  const [walletNFTsFiltered, setWalletNFTsFiltered] = useState([])
 
   const {
     walletNFTs,
@@ -40,22 +42,77 @@ const StakePage = () => {
 
   const { publicKey } = useWallet()
 
+  const filterNFTS = useCallback(() => {
+    try {
+      const walletNFTsFilteredNew = walletNFTs.filter((item) => !item.externalMetadata.name.includes('MARNO'))
+      setWalletNFTsFiltered(walletNFTsFilteredNew)
+    } catch (e) {
+      console.error(e);
+    }
+  }, [walletNFTs])
+
+  useEffect(() => {
+    if (!publicKey) return;
+    console.log('StakePage:', {
+      farmId,
+      walletNFTs,
+      farmerAccount,
+      farmerVaultAccount,
+      farmerStatus,
+      selectedWalletItems,
+      isLocked,
+      availableA,
+      feedbackStatus,
+      farmerVaultNFTs,
+      selectedVaultItems,
+    })
+    filterNFTS();
+  }, [publicKey, walletNFTs])
+
+  useEffect(() => {
+    if (!walletNFTsFiltered) return;
+    console.log('StakePage:', {
+      walletNFTsFiltered,
+    })
+  }, [walletNFTsFiltered])
+
   const [theme] = useState('theme-main')
 
   const [mode, setMode] = useState('home')
   const modes = {
     home: mode === 'home',
     connect: mode === 'connect',
-    staking: mode === 'staking',
-    claiming: mode === 'claiming',
   }
+
+  const availableToClaim = useMemo(() => (availableA / 1000000000).toFixed(2), [availableA]);
 
   return (
     <div className={theme}>
-      <Header farmId={farmId} setFarmId={setFarmId} />
+      <Header />
       <div className="app">
 
-        {modes.home &&
+        {!publicKey ? (
+        /** Render nothing if there is no wallet connected */
+        <></>
+        ) : !farmerAccount ? (
+        /** Farm ID is not configured */
+        <></>
+        ) : farmerAccount && !farmerAccount?.identity ? (
+        /** If there is farmerAccount variable, but no address, it means account isn't initialized */
+        <></>
+        ) : (
+        /** Render everything, since there is wallet and farmer account */
+        <>
+          {farmerAccount?.identity ? (
+          /** Farmer account info section */
+          <></>
+          ) : (
+          <></>
+          )}
+        </>
+        )}
+
+        {!!modes.home &&
         <section className={s.section}>
           <h1 className={s.h1}>Welcome to the Astro Babies Farm</h1>
           <div className={s.form}>
@@ -69,28 +126,7 @@ const StakePage = () => {
         </section>
         }
 
-        {!publicKey ? (
-        /** Render nothing if there is no wallet connected */
-          <></>
-        ) : !farmerAccount ? (
-        /** Farm ID is not configured */
-          <></>
-        ) : farmerAccount && !farmerAccount?.identity ? (
-        /** If there is farmerAccount variable, but no address, it means account isn't initialized */
-          <></>
-        ) : (
-        /** Render everything, since there is wallet and farmer account */
-          <>
-            {farmerAccount?.identity ? (
-            /** Farmer account info section */
-            <></>
-            ) : (
-            <></>
-            )}
-          </>
-        )}
-
-        {modes.connect && !publicKey &&
+        {!!modes.connect && !publicKey &&
         <section className={s.section}>
           <WalletMultiButton className={s.button}>
             Choose wallet...
@@ -107,12 +143,32 @@ const StakePage = () => {
         </section>
         }
 
-        {!!publicKey && farmerAccount && !farmerAccount?.identity &&
+        {!!publicKey && !!farmerAccount && !farmerAccount?.identity &&
+        <section className={s.section}>
+          <div className={s.form}>
+            <img className={s.nft} src="/images/nft.png" alt="NFT"/>
+            <div>
+              <p>
+                Farmer account not found.
+              </p>
+              <p>
+                Create a new one?
+              </p>
+            </div>
+            <button onClick={handleInitStakingButtonClick}>New Farmer</button>
+          </div>
+          <img className={s.nftLeft} src="/images/1.png" alt="NFT"/>
+          <img className={s.nftRight} src="/images/2.png" alt="NFT"/>
+          <div></div>
+        </section>
+        }
+
+        {!!publicKey && !!farmerAccount && farmerAccount?.identity &&
         <div className={s.containerStaking}>
           <div className={s.form}>
             <img className={s.nft} src="/images/nft.png" alt="NFT"/>
             <p>Staked farmer count: 349</p>
-            <h1 className={s.h1}>Astro Babies Staked: 138</h1>
+            <h1 className={s.h1}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h1>
             <div className={s.description}>
               Select your Astro Babies and move them into "Your Stake", lock and start to begin staking
             </div>
@@ -121,34 +177,106 @@ const StakePage = () => {
             <section className={s.sectionNfts}>
               <h1>Your wallet</h1>
               <div className={s.nftsGallery}>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
+                {walletNFTs.length ? walletNFTs.map((item) => {
+                  const isSelected = selectedWalletItems.find(
+                  (NFT) =>
+                  NFT.onchainMetadata.mint ===
+                  item.onchainMetadata.mint
+                  )
+                  return (
+                  <CollectionItem
+                  className={isSelected ? s.nftsGalleryItemSelected : s.nftsGalleryItem}
+                  key={item.onchainMetadata.mint}
+                  item={item}
+                  onClick={!isLocked ? handleWalletItemClick : () => true}
+                  />
+                  )
+                }) : (
+                <div>There are no NFTs on your wallet</div>
+                )}
               </div>
             </section>
             <div className={s.arrows}>
-              <img src="/images/arrow-left.svg" alt="left"/>
-              <img src="/images/arrow-right.svg" alt="right"/>
+              {selectedVaultItems?.length ? (
+              <>
+                {!isLocked ? (
+                <img
+                src="/images/arrow-left.svg"
+                alt="left"
+                onClick={handleMoveToWalletButtonClick}
+                />
+                ) : null}
+              </>
+              ) : null}
+
+              {selectedWalletItems?.length && !isLocked ? (
+              <img
+              src="/images/arrow-right.svg"
+              alt="right"
+              onClick={handleMoveToVaultButtonClick}
+              />
+              ) : null}
             </div>
             <section className={s.sectionNfts}>
               <h1>Your stake</h1>
               <div className={s.nftsGallery}>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
-                <img src="/images/nft.png" alt="NFT"/>
+                {farmerVaultNFTs?.length ? farmerVaultNFTs.map((item) => {
+                  const isSelected = selectedVaultItems.find(
+                  (NFT) =>
+                  NFT.onchainMetadata.mint ===
+                  item.onchainMetadata.mint
+                  )
+                  return (
+                  <CollectionItem
+                  className={isSelected ? s.nftsGalleryItemSelected : s.nftsGalleryItem}
+                  key={item.onchainMetadata.mint}
+                  item={item}
+                  onClick={!isLocked ? handleVaultItemClick : () => true}
+                  />
+                  )
+                }) : (
+                <div>There are no NFTs on your stake</div>
+                )}
               </div>
             </section>
           </div>
           <div className={s.buttons}>
-            <button onClick={() => setMode('claiming')}>Begin staking</button>
-            <button>CLAIM 0</button>
+
+            <button
+            onClick={handleStakeButtonClick}
+            disabled={
+              !(farmerStatus === "unstaked" && farmerVaultNFTs?.length)
+            }
+            >
+              Begin staking
+            </button>
+
+            <button
+            onClick={handleUnstakeButtonClick}
+            disabled={
+              !(
+              farmerStatus === "staked" ||
+              farmerStatus === "pendingCooldown"
+              )
+            }
+            >
+              {farmerStatus === "pendingCooldown"
+              ? "End cooldown"
+              : "End staking"}
+            </button>
+
+            <button
+            onClick={handleClaimButtonClick}
+            disabled={!Number(availableA)}
+            >
+              CLAIM {availableToClaim}
+            </button>
+
           </div>
         </div>
         }
 
-        {!!publicKey && farmerAccount && farmerAccount?.identity &&
+        {!!publicKey && !!farmerAccount && farmerAccount?.identity && !!farmerAccount?.gemsStaked?.toNumber() &&
         <div className={s.containerStaking}>
           <div className={s.buttons}>
             <button>TESTNET</button>
@@ -162,7 +290,7 @@ const StakePage = () => {
           <div className={s.form}>
             <img className={s.nft} src="/images/nft.png" alt="NFT"/>
             <p>Staked farmer count: 349</p>
-            <h1 className={s.h1}>Astro Babies Staked: 138</h1>
+            <h1 className={s.h1}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h1>
             <div className={s.description}>
               Select your Astro Babies and move them into "Your Stake", lock and start to begin staking
             </div>
@@ -189,31 +317,43 @@ const StakePage = () => {
           </div>
           <div className={s.buttons}>
             <button onClick={() => setMode('claiming')}>End Staking</button>
-            <button>CLAIM 1085 $</button>
+            <button
+            onClick={handleClaimButtonClick}
+            disabled={!Number(availableA)}
+            >
+              CLAIM {availableToClaim}
+            </button>
           </div>
         </div>
         }
 
-        {!!publicKey &&
+        {!!publicKey && !!farmerAccount && !!farmerAccount?.identity &&
         <section className={s.sectionStaking}>
-          <div className={s.sectionPart}>
-            <div>Stake</div>
-            <div>Staked</div>
-            <h2 className={s.h2}>Astro Babies Staked: 3</h2>
-          </div>
           <div>
+            <div className={s.status}>
+              <div>State:</div>
+              <span>{farmerStatus}</span>
+            </div>
+          </div>
+          <h2 className={s.h2}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h2>
+          <div className={s.variableReward}>
             <div>Variable reward:</div>
             <div>Last recorded: Nan</div>
           </div>
-          <div>
+          <div className={s.rewards}>
             <div>Total rewards:</div>
             <h1 className={s.h1}>1040</h1>
           </div>
-          <div>
+          <div className={s.rewards}>
             <div>Claimed rewards:</div>
             <h1 className={s.h1}>0</h1>
           </div>
-          <button>CLAIM 1085 $</button>
+          <button
+          onClick={handleClaimButtonClick}
+          disabled={!Number(availableA)}
+          >
+            CLAIM {availableToClaim}
+          </button>
           <img className={s.nftLeft} src="/images/1.png" alt="NFT"/>
           <img className={s.nftRight} src="/images/2.png" alt="NFT"/>
         </section>
@@ -225,7 +365,7 @@ const StakePage = () => {
   // todo: remove after copying functionality
   return (
     <div className={theme}>
-      <Header farmId={farmId} setFarmId={setFarmId} />
+      <Header />
 
       <Flex
         sx={{

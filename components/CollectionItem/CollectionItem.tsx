@@ -38,6 +38,15 @@ const CollectionItem = (props: Props) => {
     }
 
   return (
+  <img
+  className={className}
+  src={externalMetadata.image}
+  alt="NFT"
+  onClick={handleOnClick(item)}
+  />
+  )
+
+  return (
     <Flex
       tabIndex={1}
       ref={wrapperRef}

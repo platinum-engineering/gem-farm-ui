@@ -11,9 +11,11 @@
 
   --color-header: white;
   --color-text: white;
+  --color-text-secondary: #848B96;
   --color-h: #F0A944;
   --color-span: #F0A944;
   --color-button: #B8BCDD;
+  --color-button-disabled: rgba(184, 188, 221, 0.4);
   --color-scrollbar: #B8BCDD;
 }
 
@@ -23,17 +25,20 @@
 //  --color-header: white;
 //}
 
-// colors
+// colors for background
 $color-bg: var(--color-bg);
 $color-bg-header: var(--color-bg-header);
 $color-bg-section: var(--color-bg-section);
 $color-bg-button: var(--color-bg-button);
 
+// colors for text
 $color-header: var(--color-header);
 $color-text: var(--color-text);
+$color-text-secondary: var(--color-text-secondary);
 $color-h: var(--color-h);
 $color-span: var(--color-span);
 $color-button: var(--color-button);
+$color-button-disabled: var(--color-button-disabled);
 $color-scrollbar: var(--color-scrollbar);
 
 // dimensions

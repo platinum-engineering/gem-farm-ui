@@ -6,7 +6,7 @@ body {
 }
 
 .app {
-  @include flex(column, center, normal, nowrap);
+  @include flex(column, center, normal, nowrap, 120px);
   background-image: url("/images/bg.png");
   background-size: 100%;
   min-height: 100vh;
@@ -26,6 +26,17 @@ button {
   font-weight: 500;
   font-size: 24px;
   line-height: 30px;
+}
+
+button:disabled {
+  border-radius: 16px;
+  padding: 18px 30px;
+  background-color: $color-bg-button;
+  color: $color-button-disabled;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+  cursor: auto;
 }
 
 *::-webkit-scrollbar {

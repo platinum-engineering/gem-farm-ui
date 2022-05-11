@@ -56,7 +56,7 @@ const Wallet: FC = ({ children }: { children: React.ReactChild }) => {
         commitment: "confirmed",
       }}
     >
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider wallets={wallets}>
         <WalletModalProvider>
           {/* <WalletMultiButton />
           <WalletDisconnectButton /> */}
