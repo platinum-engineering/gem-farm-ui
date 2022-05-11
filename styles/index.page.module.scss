@@ -1,0 +1,175 @@
+@import "mixins";
+
+.section {
+  @include flex(column, center, normal, nowrap, 60px);
+  position: relative;
+  color: $color-text;
+  background-color: $color-bg-section;
+  border-radius: 16px;
+  max-width: 1280px;
+  width: 100%;
+  padding: 24px;
+}
+
+.sectionStaking {
+  @include flex(column, center, normal, nowrap, 16px);
+  position: relative;
+  color: $color-text;
+  background-color: $color-bg-section;
+  border-radius: 16px;
+  max-width: 1280px;
+  width: 100%;
+  padding: 24px;
+}
+
+.sectionNfts {
+  @include flex(column, center, normal, nowrap, 16px);
+  position: relative;
+  color: $color-text;
+  background-color: $color-bg-section;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  min-width: 300px;
+}
+
+.h1 {
+  text-align: center;
+  color: $color-h;
+  font-weight: bold;
+  font-size: 34px;
+  line-height: 42px;
+}
+
+.h2 {
+  text-align: center;
+  color: $color-h;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+}
+
+.form {
+  @include flex(column, center, normal, nowrap, 24px);
+  z-index: 2;
+  position: relative;
+  font-size: 16px;
+  line-height: 20px;
+  p {
+    max-width: 300px;
+    text-align: center;
+  }
+  span {
+    color: $color-span;
+  }
+}
+
+.nft {
+  border-radius: 16px;
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+}
+
+.nftLeft {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  //transform: translateX(100px);
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+
+  @include b(tablet) {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.nftRight {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+
+  @include b(tablet) {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.description {
+  max-width: 1058px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.button {
+  @include flex(row, center, center, nowrap, 10px);
+  text-align: center;
+  border-radius: 16px;
+  padding: 18px 30px;
+  background-color: $color-bg-button;
+  color: $color-button;
+  font: inherit;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+  height: 100%;
+}
+
+.buttons {
+  @include flex(row, center, center, wrap, 20px);
+  button {
+    width: 245px;
+  }
+}
+
+.nfts {
+  @include grid(1fr 60px 1fr, 1fr, 53px);
+  width: 100%;
+
+  @include b(tablet) {
+    @include grid(1fr, 1fr 60px 1fr, 30px);
+  }
+}
+
+.nftsClaiming {
+  @include grid(1fr 1fr, 1fr, 20px);
+  width: 100%;
+
+  @include b(tablet) {
+    @include grid(1fr, 1fr 1fr, 20px);
+  }
+}
+
+.nftsGallery {
+  @include flex(row, center, center, wrap, 16px);
+  max-height: 450px;
+  overflow: auto;
+
+  img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+  }
+}
+
+.containerStaking {
+  @include flex(column, center, normal, nowrap, 60px);
+  width: 100%;
+}
+
+.arrows {
+  @include flex(row, center, center, nowrap, 20px);
+  img {
+    width: 30px;
+    cursor: pointer;
+  }
+
+  @include b(tablet) {
+    transform: rotate(90deg);
+  }
+}

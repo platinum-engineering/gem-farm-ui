@@ -5,11 +5,13 @@ import CollectionItem from "@/components/CollectionItem/CollectionItem"
 import useGemFarmStaking from "hooks/useGemFarmStaking"
 import { useWallet } from "@solana/wallet-adapter-react"
 // import { LoadingIcon } from "@/components/icons/LoadingIcon"
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
 import Header from "@/components/Header/Header"
 import { LoadingIcon } from "@/components/icons/LoadingIcon"
 import { useState } from "react"
+import s from '../styles/index.page.module.scss'
 
 const StakePage = () => {
   const [farmId, setFarmId] = useState(process.env.NEXT_PUBLIC_GEMFARM_ID || "")
@@ -38,8 +40,191 @@ const StakePage = () => {
 
   const { publicKey } = useWallet()
 
+  const [theme] = useState('theme-main')
+
+  const [mode, setMode] = useState('home')
+  const modes = {
+    home: mode === 'home',
+    connect: mode === 'connect',
+    staking: mode === 'staking',
+    claiming: mode === 'claiming',
+  }
+
   return (
-    <Container>
+    <div className={theme}>
+      <Header farmId={farmId} setFarmId={setFarmId} />
+      <div className="app">
+
+        {modes.home &&
+        <section className={s.section}>
+          <h1 className={s.h1}>Welcome to the Astro Babies Farm</h1>
+          <div className={s.form}>
+            <img className={s.nft} src="/images/nft.png" alt="NFT"/>
+            <p>Click here if you’d like to stake your <span>Astro Babies</span> in the farm:</p>
+            <button onClick={() => setMode('connect')}>Stake Astro Babies</button>
+          </div>
+          <div className={s.description}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis auteLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          </div>
+        </section>
+        }
+
+        {!publicKey ? (
+        /** Render nothing if there is no wallet connected */
+          <></>
+        ) : !farmerAccount ? (
+        /** Farm ID is not configured */
+          <></>
+        ) : farmerAccount && !farmerAccount?.identity ? (
+        /** If there is farmerAccount variable, but no address, it means account isn't initialized */
+          <></>
+        ) : (
+        /** Render everything, since there is wallet and farmer account */
+          <>
+            {farmerAccount?.identity ? (
+            /** Farmer account info section */
+            <></>
+            ) : (
+            <></>
+            )}
+          </>
+        )}
+
+        {modes.connect && !publicKey &&
+        <section className={s.section}>
+          <WalletMultiButton className={s.button}>
+            Choose wallet...
+          </WalletMultiButton>
+          <div className={s.form}>
+            <img className={s.nft} src="/images/nft.png" alt="NFT"/>
+            <p>CONNECT YOUR WALLET</p>
+          </div>
+          <img className={s.nftLeft} src="/images/1.png" alt="NFT"/>
+          <img className={s.nftRight} src="/images/2.png" alt="NFT"/>
+          <div></div>
+          <div></div>
+          <div></div>
+        </section>
+        }
+
+        {!!publicKey && farmerAccount && !farmerAccount?.identity &&
+        <div className={s.containerStaking}>
+          <div className={s.form}>
+            <img className={s.nft} src="/images/nft.png" alt="NFT"/>
+            <p>Staked farmer count: 349</p>
+            <h1 className={s.h1}>Astro Babies Staked: 138</h1>
+            <div className={s.description}>
+              Select your Astro Babies and move them into "Your Stake", lock and start to begin staking
+            </div>
+          </div>
+          <div className={s.nfts}>
+            <section className={s.sectionNfts}>
+              <h1>Your wallet</h1>
+              <div className={s.nftsGallery}>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+              </div>
+            </section>
+            <div className={s.arrows}>
+              <img src="/images/arrow-left.svg" alt="left"/>
+              <img src="/images/arrow-right.svg" alt="right"/>
+            </div>
+            <section className={s.sectionNfts}>
+              <h1>Your stake</h1>
+              <div className={s.nftsGallery}>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+              </div>
+            </section>
+          </div>
+          <div className={s.buttons}>
+            <button onClick={() => setMode('claiming')}>Begin staking</button>
+            <button>CLAIM 0</button>
+          </div>
+        </div>
+        }
+
+        {!!publicKey && farmerAccount && farmerAccount?.identity &&
+        <div className={s.containerStaking}>
+          <div className={s.buttons}>
+            <button>TESTNET</button>
+            <WalletMultiButton
+            className={s.button}
+            onClick={() => setMode('home')}
+            >
+              PHANTOM
+            </WalletMultiButton>
+          </div>
+          <div className={s.form}>
+            <img className={s.nft} src="/images/nft.png" alt="NFT"/>
+            <p>Staked farmer count: 349</p>
+            <h1 className={s.h1}>Astro Babies Staked: 138</h1>
+            <div className={s.description}>
+              Select your Astro Babies and move them into "Your Stake", lock and start to begin staking
+            </div>
+          </div>
+          <div className={s.nftsClaiming}>
+            <section className={s.sectionNfts}>
+              <h1>Your wallet</h1>
+              <div className={s.nftsGallery}>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+              </div>
+            </section>
+            <section className={s.sectionNfts}>
+              <h1>Your stake</h1>
+              <div className={s.nftsGallery}>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+                <img src="/images/nft.png" alt="NFT"/>
+              </div>
+            </section>
+          </div>
+          <div className={s.buttons}>
+            <button onClick={() => setMode('claiming')}>End Staking</button>
+            <button>CLAIM 1085 $</button>
+          </div>
+        </div>
+        }
+
+        {!!publicKey &&
+        <section className={s.sectionStaking}>
+          <div className={s.sectionPart}>
+            <div>Stake</div>
+            <div>Staked</div>
+            <h2 className={s.h2}>Astro Babies Staked: 3</h2>
+          </div>
+          <div>
+            <div>Variable reward:</div>
+            <div>Last recorded: Nan</div>
+          </div>
+          <div>
+            <div>Total rewards:</div>
+            <h1 className={s.h1}>1040</h1>
+          </div>
+          <div>
+            <div>Claimed rewards:</div>
+            <h1 className={s.h1}>0</h1>
+          </div>
+          <button>CLAIM 1085 $</button>
+          <img className={s.nftLeft} src="/images/1.png" alt="NFT"/>
+          <img className={s.nftRight} src="/images/2.png" alt="NFT"/>
+        </section>
+        }
+      </div>
+    </div>
+  )
+
+  // todo: remove after copying functionality
+  return (
+    <div className={theme}>
       <Header farmId={farmId} setFarmId={setFarmId} />
 
       <Flex
@@ -445,7 +630,7 @@ const StakePage = () => {
           </>
         )}
       </Flex>
-    </Container>
+    </div>
   )
 }
 
