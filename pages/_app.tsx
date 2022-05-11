@@ -7,6 +7,10 @@ import dynamic from "next/dynamic"
 // import "nprogress/nprogress.css" //styles of nprogress
 // import "normalize.css/normalize.css"
 import "@solana/wallet-adapter-react-ui/styles.css"
+import '@/styles/reset.scss'
+import '@/styles/index.scss'
+import '@/styles/theme.scss'
+import '@/public/fonts/ClashDisplay/clash-display.css'
 
 // @ts-ignore
 import withGA from "next-ga"

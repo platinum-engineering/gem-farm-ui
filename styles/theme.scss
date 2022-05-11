@@ -1,0 +1,41 @@
+#__next {
+  --height-header-desktop: 130px;
+  --height-header-mobile: 130px;
+}
+
+.theme-main {
+  --color-bg: black;
+  --color-bg-header: transparent;
+  --color-bg-section: rgba(255, 255, 255, 0.15);
+  --color-bg-button: #28303D;
+
+  --color-header: white;
+  --color-text: white;
+  --color-h: #F0A944;
+  --color-span: #F0A944;
+  --color-button: #B8BCDD;
+  --color-scrollbar: #B8BCDD;
+}
+
+//.theme-dark {
+//  --color-bg: black;
+//  --color-bg-header: black;
+//  --color-header: white;
+//}
+
+// colors
+$color-bg: var(--color-bg);
+$color-bg-header: var(--color-bg-header);
+$color-bg-section: var(--color-bg-section);
+$color-bg-button: var(--color-bg-button);
+
+$color-header: var(--color-header);
+$color-text: var(--color-text);
+$color-h: var(--color-h);
+$color-span: var(--color-span);
+$color-button: var(--color-button);
+$color-scrollbar: var(--color-scrollbar);
+
+// dimensions
+$height-header-desktop: var(--height-header-desktop);
+$height-header-mobile: var(--height-header-mobile);

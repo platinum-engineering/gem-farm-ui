@@ -1,19 +1,40 @@
 /** @jsxImportSource theme-ui */
 import Link from "next/link"
 import { Button, Container, Flex, Input, Text } from "@theme-ui/components"
-
 import WalletManager from "@/components/WalletManager/WalletManager"
 import { Dispatch, SetStateAction, useState } from "react"
+
 import { CloseIcon, MenuIcon } from "../icons"
+import s from './Header.module.scss'
 
 type Props = {
+  onClick?: any
   farmId?: string
   setFarmId?: Dispatch<SetStateAction<string>>
 }
-const Header = ({ farmId, setFarmId }: Props) => {
+const Header = ({ farmId, setFarmId, onClick }: Props) => {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false)
   const [isChangingFarmId, setIsChangingFarmId] = useState(false)
 
+  return (
+  <header className={s.header} onClick={onClick}>
+    <div className={s.left}>
+      <img className={s.logo} src="/images/logo.png" alt="Astrobabies" />
+      <div className={s.logoText}>
+        Astro Babies
+      </div>
+    </div>
+    <nav className={s.right}>
+      <div className={s.rightItem}>Tesla Giveaway</div>
+      <div className={s.rightItem}>Minting</div>
+      <div className={s.rightItem}>Litepaper</div>
+      <div className={s.rightItem}>Press</div>
+      <div className={s.rightItem}>FAQ</div>
+    </nav>
+  </header>
+  )
+
+  // todo: remove after copying functionality
   return (
     <Flex
       sx={{
