@@ -3,6 +3,8 @@ import React, { useState, useRef } from 'react'
 import s from './Header.module.scss'
 import useWindowSize from '../../hooks/useWindowSize'
 import useOnClickOutside from '../../hooks/useOnClickOutside'
+import Dropdown from "@/components/Dropdown/Dropdown";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 type Props = {
   onClick?: any
@@ -41,6 +43,9 @@ const Header = ({ onClick }: Props) => {
       {open &&
       <div ref={refMobileMenu} className={s.mobileMenu}>
         <div>
+          <div className={s.mobileMenuItem}>
+            <WalletMultiButton className={s.button} />
+          </div>
           <div className={s.mobileMenuItem}>Tesla Giveaway</div>
           <div className={s.mobileMenuItem}>Minting</div>
           <div className={s.mobileMenuItem}>Litepaper</div>
@@ -68,6 +73,9 @@ const Header = ({ onClick }: Props) => {
         <div className={s.rightItem}>Litepaper</div>
         <div className={s.rightItem}>Press</div>
         <div className={s.rightItem}>FAQ</div>
+        <div className={s.rightItem}>
+          <WalletMultiButton className={s.button} />
+        </div>
       </nav>
     </div>
   </header>

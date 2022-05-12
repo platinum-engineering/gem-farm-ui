@@ -18,9 +18,12 @@
     height: 100%;
   }
 
+  @include b(1280) {
+    padding: 30px 30px;
+  }
 
   @include b(tablet) {
-    padding: 30px 30px;
+    padding: 30px 20px;
   }
 
   @include b(mobile) {
@@ -40,9 +43,28 @@
   width: 100%;
   height: 100%;
 
-  @include b(tablet) {
+  @include b(1280) {
     gap: 30px
   }
+
+  @include b(tablet) {
+    gap: 10px
+  }
+}
+
+.button {
+  @include flex(row, center, center, nowrap, 10px);
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 16px;
+  padding: 18px 20px;
+  background-color: $color-bg-button;
+  color: $color-button;
+  font: inherit;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  height: 100%;
 }
 
 .rightItem {
@@ -53,6 +75,11 @@
   cursor: pointer;
   height: 100%;
   padding: 10px 0 0 0;
+
+  @include b(tablet) {
+    font-size: 16px;
+    line-height: 18px;
+  }
 }
 
 .logo {

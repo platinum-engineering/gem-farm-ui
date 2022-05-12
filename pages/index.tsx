@@ -14,6 +14,8 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
 import Header from "@/components/Header/Header"
 import { LoadingIcon } from "@/components/icons/LoadingIcon"
 import s from '../styles/index.page.module.scss'
+import Dropdown from "@/components/Dropdown/Dropdown";
+import { NetworksNames } from "../constants/networks";
 
 const StakePage = () => {
   const [farmId] = useState(process.env.NEXT_PUBLIC_GEMFARM_ID || "")
@@ -81,6 +83,11 @@ const StakePage = () => {
 
   const [theme] = useState('theme-main')
 
+  const [network, setNetwork] = useState<string | number>('devnet')
+  const handleChangeNetwork = (value: string | number) => {
+    setNetwork(value)
+  }
+
   const [mode, setMode] = useState('home')
   const modes = {
     home: mode === 'home',
@@ -89,7 +96,7 @@ const StakePage = () => {
 
   const availableToClaim = useMemo(() => numeral((availableA / 1000000000).toFixed(2)).format('0,0.00'), [availableA]);
   const variableReward = useMemo(() => {
-    return numeral((farmerAccount?.rewardA?.variableRate?.lastRecordedAccruedRewardPerRarityPoint?.n || 0) / 10 ** 3).format('0,0.0')
+    return numeral((farmerAccount?.rewardA?.variableRate?.lastRecordedAccruedRewardPerRarityPoint?.n || 0) / 10 ** 3).format('0,0.00')
   }, [farmerAccount]);
 
   return (
@@ -175,7 +182,16 @@ const StakePage = () => {
         {!!publicKey && !!farmerAccount && farmerAccount?.identity &&
         <div className={s.containerStaking}>
           <div className={s.buttons}>
-            <button>TESTNET</button>
+            <Dropdown
+            items={[
+              { key: 'devnet', name: 'DEVNET' },
+              { key: 'mainnet', name: 'MAINNET' },
+            ]}
+            value={network}
+            onChange={handleChangeNetwork}
+            >
+              <button className={s.button}>{NetworksNames[network]}</button>
+            </Dropdown>
             <WalletMultiButton className={s.button}>
               PHANTOM
             </WalletMultiButton>
@@ -304,11 +320,11 @@ const StakePage = () => {
           </div>
           <div className={s.rewards}>
             <div>Total rewards:</div>
-            <h1 className={s.h1}>1040</h1>
+            <h1 className={s.h1}>{farmerAccount?.rewardA?.accruedReward.toNumber() || 0}</h1>
           </div>
           <div className={s.rewards}>
             <div>Claimed rewards:</div>
-            <h1 className={s.h1}>0</h1>
+            <h1 className={s.h1}>{farmerAccount?.rewardA?.paidOutReward / (10 ** 6) || 0}</h1>
           </div>
           <button
           onClick={handleClaimButtonClick}
@@ -321,417 +337,6 @@ const StakePage = () => {
         </section>
         }
       </div>
-    </div>
-  )
-
-  // todo: remove after copying functionality
-  return (
-    <div className={theme}>
-      <Header />
-
-      <Flex
-        sx={{
-          flexDirection: "column",
-          marginTop: "3.2rem",
-          alignItems: "center",
-          padding: "0 1.6rem",
-        }}
-      >
-        <Heading>Your staking account</Heading>
-        <Text>Below you can stake, unstake and collect rewards.</Text>
-
-        {!publicKey ? (
-          /** Render nothing if there is no wallet connected. */
-          <Text
-            sx={{
-              textAlign: "center",
-              margin: "3.2rem 0",
-            }}
-          >
-            Connect your wallet first.
-          </Text>
-        ) : !farmerAccount ? (
-          // <LoadingIcon
-          //   size={"3.2rem"}
-          //   sx={{
-          //     margin: "3.2rem 0"
-          //   }}
-          // />
-          <Text mt="1.6rem">Farm ID is not configured.</Text>
-        ) : /** If there is farmerAccount variable, but no address, it means account isn't initialized */
-        farmerAccount && !farmerAccount?.identity ? (
-          <Button
-            sx={{
-              margin: "3.2rem 0",
-            }}
-            onClick={handleInitStakingButtonClick}
-          >
-            Init staking account
-          </Button>
-        ) : (
-          <>
-            {/** Render everything, since there is wallet and farmer account */}
-            {/** Farmer account info section */}
-            {farmerAccount?.identity ? (
-              <>
-                <Flex
-                  sx={{
-                    flexDirection: "column",
-                    margin: "1.6rem 0",
-                  }}
-                >
-                  <Flex
-                    sx={{
-                      gap: ".4rem",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      sx={{
-                        maxHeight: "2.4rem",
-                      }}
-                      src="images/gemtransparent.gif"
-                    />
-                    <Text>
-                      NFTs staked:&nbsp;
-                      {farmerAccount?.gemsStaked.toNumber()}
-                    </Text>
-                  </Flex>
-                  <Text
-                    sx={{
-                      textAlign: "center",
-                    }}
-                  >
-                    Vault state: <b>{isLocked ? "locked" : "unlocked"}</b>
-                    <br />
-                  </Text>
-                  <Text
-                    sx={{
-                      textAlign: "center",
-                    }}
-                  >
-                    Account status: <b>{farmerStatus}</b>
-                    <br />
-                  </Text>
-                </Flex>
-
-                <Flex
-                  sx={{
-                    gap: "1.6rem",
-                    margin: "1.6rem 0",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                    alignSelf: "stretch",
-                    justifyContent: "center",
-
-                    "@media (min-width: 768px": {
-                      flexDirection: "row",
-                    },
-                  }}
-                >
-                  <Button
-                    onClick={handleStakeButtonClick}
-                    disabled={
-                      !(farmerStatus === "unstaked" && farmerVaultNFTs?.length)
-                    }
-                  >
-                    Stake
-                  </Button>
-                  <Button
-                    onClick={handleUnstakeButtonClick}
-                    disabled={
-                      !(
-                        farmerStatus === "staked" ||
-                        farmerStatus === "pendingCooldown"
-                      )
-                    }
-                  >
-                    {farmerStatus === "pendingCooldown"
-                      ? "End cooldown"
-                      : "Unstake"}
-                  </Button>
-                  <Button
-                    onClick={handleClaimButtonClick}
-                    disabled={!Number(availableA)}
-                  >
-                    Claim{" "}
-                    <img
-                      sx={{
-                        margin: "0 .4rem 0 .8rem",
-                        maxHeight: "2.4rem",
-                      }}
-                      src="images/icon-list-item.png"
-                    />
-                    {availableA ? (
-                      <b>{(availableA / 1000000000).toFixed(2)}</b>
-                    ) : (
-                      0
-                    )}
-                  </Button>
-                  <Button onClick={handleRefreshRewardsButtonClick}>
-                    Refresh
-                  </Button>
-                </Flex>
-                <Flex
-                  sx={{
-                    alignItems: "center",
-                    gap: ".8rem",
-                    margin: ".8rem 0",
-                  }}
-                >
-                  {feedbackStatus ? (
-                    <>
-                      <LoadingIcon size="1.6rem" />
-                      {"  "} <Text variant="small">{feedbackStatus}</Text>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                  &nbsp;
-                </Flex>
-              </>
-            ) : null}
-
-            <Tabs
-              sx={{
-                margin: "3.2rem 0",
-                alignSelf: "stretch",
-                minHeight: "48rem",
-              }}
-            >
-              <TabList>
-                <Tab>Your wallet</Tab>
-                <Tab>Your vault</Tab>
-              </TabList>
-
-              <TabPanel>
-                {walletNFTs ? (
-                  walletNFTs.length ? (
-                    <Flex
-                      sx={{
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div
-                        sx={{
-                          display: "grid",
-                          gridTemplateColumns:
-                            walletNFTs.length > 1 ? "1fr 1fr" : "1fr",
-                          gap: "1.6rem",
-                          alignItems: "center",
-
-                          "@media (min-width: 768px)": {
-                            gridTemplateColumns:
-                              walletNFTs.length > 9
-                                ? "1fr 1fr 1fr 1fr 1fr 1fr 1fr"
-                                : walletNFTs.length > 4
-                                ? "1fr 1fr 1fr 1fr 1fr"
-                                : walletNFTs.map(() => "1fr").join(" "),
-                          },
-                        }}
-                      >
-                        {walletNFTs.map((item) => {
-                          const isSelected = selectedWalletItems.find(
-                            (NFT) =>
-                              NFT.onchainMetadata.mint ===
-                              item.onchainMetadata.mint
-                          )
-
-                          return (
-                            <CollectionItem
-                              key={item.onchainMetadata.mint}
-                              item={item}
-                              onClick={
-                                !isLocked ? handleWalletItemClick : () => true
-                              }
-                              sx={{
-                                maxWidth: "16rem",
-                                "> img": {
-                                  border: "3px solid transparent",
-                                  borderColor: isSelected
-                                    ? "primary"
-                                    : "transparent",
-                                },
-                              }}
-                            />
-                          )
-                        })}
-                      </div>
-                      {walletNFTs.length && !isLocked ? (
-                        <Text
-                          sx={{
-                            margin: "3.2rem 0 .8rem 0",
-                          }}
-                          variant="small"
-                        >
-                          Select NFTs to move them to your Vault.
-                        </Text>
-                      ) : null}
-                      <Text>
-                        {/* Selected:{" "}
-                    {selectedWalletItems && selectedWalletItems.length
-                      ? selectedWalletItems
-                          .map((NFT) => NFT.onchainMetadata.metaData.data.name)
-                          .join(", ")
-                      : null} */}
-                        {selectedWalletItems?.length && !isLocked ? (
-                          <Button onClick={handleMoveToVaultButtonClick}>
-                            Deposit selected
-                          </Button>
-                        ) : null}
-                      </Text>
-                    </Flex>
-                  ) : (
-                    /** walletNFTs fetched but array is empty, means current wallet has no NFT. */
-                    <Flex
-                      sx={{
-                        justifyContent: "center",
-                        alignSelf: "stretch",
-                      }}
-                    >
-                      <Text>There are no NFTs on your wallet.</Text>
-                    </Flex>
-                  )
-                ) : /** No walletNFTs and public key, means it is loading */
-                publicKey ? (
-                  <Flex
-                    sx={{
-                      justifyContent: "center",
-                      alignSelf: "stretch",
-                    }}
-                  >
-                    <Spinner variant="styles.spinnerLarge" />
-                  </Flex>
-                ) : null}
-              </TabPanel>
-              <TabPanel>
-                {farmerVaultAccount ? (
-                  <>
-                    {/** Vault UI section */}
-                    {/* <ThemeHeading
-                  variant="heading3"
-                  sx={{
-                    marginTop: "3.2rem",
-                    textAlign: "center"
-                  }}
-                >
-                  Your Vault
-                </ThemeHeading> */}
-
-                    {farmerVaultNFTs ? (
-                      farmerVaultNFTs.length ? (
-                        <Flex
-                          sx={{
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignSelf: "stretch",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div
-                            sx={{
-                              display: "grid",
-                              gridTemplateColumns:
-                                farmerVaultNFTs.length > 1 ? "1fr 1fr" : "1fr",
-                              gap: "1.6rem",
-
-                              "@media (min-width: 768px)": {
-                                gridTemplateColumns:
-                                  farmerVaultNFTs.length > 9
-                                    ? "1fr 1fr 1fr 1fr 1fr 1fr 1fr"
-                                    : farmerVaultNFTs.length > 4
-                                    ? "1fr 1fr 1fr 1fr 1fr"
-                                    : farmerVaultNFTs
-                                        .map(() => "1fr")
-                                        .join(" "),
-                              },
-                            }}
-                          >
-                            {farmerVaultNFTs.map((item) => {
-                              const isSelected = selectedVaultItems.find(
-                                (NFT) =>
-                                  NFT.onchainMetadata.mint ===
-                                  item.onchainMetadata.mint
-                              )
-
-                              return (
-                                <CollectionItem
-                                  key={item.onchainMetadata.mint}
-                                  item={item}
-                                  onClick={
-                                    !isLocked
-                                      ? handleVaultItemClick
-                                      : () => true
-                                  }
-                                  sx={{
-                                    maxWidth: "16rem",
-                                    "> img": {
-                                      border: "3px solid transparent",
-                                      borderColor: isSelected
-                                        ? "primary"
-                                        : "transparent",
-                                    },
-                                  }}
-                                />
-                              )
-                            })}
-                          </div>
-                          {farmerVaultNFTs.length && !isLocked ? (
-                            <Text
-                              sx={{
-                                margin: "3.2rem 0 .8rem 0",
-                              }}
-                              variant="small"
-                            >
-                              Select NFTs to withdraw them to your wallet.
-                            </Text>
-                          ) : null}
-
-                          {selectedVaultItems && selectedVaultItems.length ? (
-                            <>
-                              {/* Selected:{" "}
-                          {selectedVaultItems
-                            .map((NFT) => NFT.onchainMetadata.metaData.data.name)
-                            .join(", ")} */}
-                              {!isLocked ? (
-                                <Button onClick={handleMoveToWalletButtonClick}>
-                                  Withdraw selected
-                                </Button>
-                              ) : null}
-                            </>
-                          ) : null}
-                        </Flex>
-                      ) : (
-                        /** vaultNFTs fetched but array is empty, means current wallet has no NFT. */
-                        <Flex
-                          sx={{
-                            justifyContent: "center",
-                            alignSelf: "stretch",
-                          }}
-                        >
-                          <Text>There are no NFTs on your vault.</Text>
-                        </Flex>
-                      )
-                    ) : /** No vaultNFTs and public key, means it is loading */
-                    publicKey ? (
-                      <Flex
-                        sx={{
-                          justifyContent: "center",
-                          alignSelf: "stretch",
-                        }}
-                      >
-                        <Spinner variant="styles.spinnerLarge" />
-                      </Flex>
-                    ) : null}
-                  </>
-                ) : null}
-              </TabPanel>
-            </Tabs>
-          </>
-        )}
-      </Flex>
     </div>
   )
 }

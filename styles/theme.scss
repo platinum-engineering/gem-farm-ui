@@ -4,12 +4,15 @@
 }
 
 .theme-main {
+  // colors for background
   --color-bg: #000;
   --color-bg-header: transparent;
   --color-bg-section: rgba(255, 255, 255, 0.15);
   --color-bg-button: #28303D;
   --color-bg-menu: #152234;
-
+  --color-bg-dropdown: #28303D;
+  --color-bg-dropdown-hover: #485262;
+  // colors for text
   --color-header: #FFF;
   --color-text: #FFF;
   --color-a: #FFF;
@@ -20,6 +23,7 @@
   --color-button: #B8BCDD;
   --color-button-disabled: rgba(184, 188, 221, 0.4);
   --color-scrollbar: #B8BCDD;
+  --color-dropdown: #B8BCDD;
 }
 
 //.theme-dark {
@@ -34,6 +38,8 @@ $color-bg-header: var(--color-bg-header);
 $color-bg-section: var(--color-bg-section);
 $color-bg-button: var(--color-bg-button);
 $color-bg-menu: var(--color-bg-menu);
+$color-bg-dropdown: var(--color-bg-dropdown);
+$color-bg-dropdown-hover: var(--color-bg-dropdown-hover);
 
 // colors for text
 $color-header: var(--color-header);
@@ -46,6 +52,7 @@ $color-span: var(--color-span);
 $color-button: var(--color-button);
 $color-button-disabled: var(--color-button-disabled);
 $color-scrollbar: var(--color-scrollbar);
+$color-dropdown: var(--color-dropdown);
 
 // dimensions
 $height-header-desktop: var(--height-header-desktop);
