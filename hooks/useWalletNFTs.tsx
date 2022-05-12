@@ -29,10 +29,13 @@ const useWalletNFTs = () => {
   const { connection } = useConnection()
   const { publicKey } = useWallet()
   const [walletNFTs, setWalletNFTs] = useState<Array<NFT>>([])
+  const [loadingWalletNFTs, setLoadingWalletNFTs] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchNFTs = async () => {
+      setLoadingWalletNFTs(true)
       const NFTs = await getNFTsByOwner(publicKey, connection)
+      setLoadingWalletNFTs(false)
       setWalletNFTs(NFTs)
     }
 
@@ -41,7 +44,7 @@ const useWalletNFTs = () => {
     }
   }, [publicKey])
 
-  return { walletNFTs }
+  return { walletNFTs, loadingWalletNFTs }
 }
 
 export default useWalletNFTs

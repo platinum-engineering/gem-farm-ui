@@ -18,7 +18,10 @@ async function getNFTMetadata(
     const metadataPDA = await Metadata.getPDA(mint)
     const onchainMetadata = (await Metadata.load(conn, metadataPDA)).data
     const externalMetadata = (await axios.get(onchainMetadata.data.uri)).data
-
+    console.log('getNFTMetadata:', {
+      onchainMetadata,
+      externalMetadata,
+    })
     return {
       pubkey: pubkey ? new PublicKey(pubkey) : undefined,
       mint: new PublicKey(mint),
@@ -60,7 +63,6 @@ export async function getNFTsByOwner(
   const tokens = tokenAccounts.value
     .filter((tokenAccount) => {
       const amount = tokenAccount.account.data.parsed.info.tokenAmount
-
       return amount.decimals === 0 && amount.uiAmount === 1
     })
     .map((tokenAccount) => {
