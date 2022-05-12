@@ -2,7 +2,7 @@
 @import "../../styles/mixins";
 
 .header {
-  @include flex(row, center, space-between, nowrap, 10px);
+  @include flex(row, center, center, nowrap);
   position: absolute;
   top: 0;
   z-index: 100;
@@ -10,10 +10,25 @@
   height: $height-header-desktop;
   padding: 30px 80px;
   color: $color-header;
-  background-color: transparent;
+
+  > div {
+    @include flex(row, center, space-between, nowrap, 20px);
+    max-width: 1280px;
+    width: 100%;
+    height: 100%;
+  }
+
+  @include b(1280) {
+    padding: 30px 30px;
+  }
 
   @include b(tablet) {
-    padding: 30px 30px;
+    padding: 30px 20px;
+  }
+
+  @include b(mobile) {
+    height: $height-header-mobile;
+    padding: 16px 10px;
   }
 }
 
@@ -24,8 +39,31 @@
 }
 
 .right {
-  @include flex(row, center, normal, nowrap, 60px);
+  @include flex(row, center, flex-end, nowrap, 60px);
   width: 100%;
+  height: 100%;
+
+  @include b(1280) {
+    gap: 30px
+  }
+
+  @include b(tablet) {
+    gap: 10px
+  }
+}
+
+.button {
+  @include flex(row, center, center, nowrap, 10px);
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 16px;
+  padding: 18px 20px;
+  background-color: $color-bg-button;
+  color: $color-button;
+  font: inherit;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
   height: 100%;
 }
 
@@ -35,11 +73,23 @@
   font-size: 20px;
   line-height: 24px;
   cursor: pointer;
+  height: 100%;
+  padding: 10px 0 0 0;
+
+  @include b(tablet) {
+    font-size: 16px;
+    line-height: 18px;
+  }
 }
 
 .logo {
   width: 69px;
   height: 69px;
+
+  @include b(mobile) {
+    width: 50px;
+    height: 50px;
+  }
 }
 
 .logoText {
@@ -49,4 +99,59 @@
   line-height: 30px;
   text-transform: uppercase;
   cursor: pointer;
+  height: 100%;
+  padding: 10px 0 0 0;
+
+  @include b(mobile) {
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
+
+.menuButton {
+  @include flex(row, center, center, nowrap);
+  height: 100%;
+  cursor: pointer;
+  padding: 30px 20px;
+}
+
+.menuButtonOpen {
+  height: 14px;
+  width: 18px;
+}
+
+.menuButtonClose {
+  height: 20px;
+  width: 20px;
+}
+
+.mobileMenu {
+  position: absolute;
+  top: $height-header-mobile;
+  left: 0;
+  z-index: 200;
+  width: 100%;
+  padding: 0 10px;
+
+  > div {
+    @include flex(column, center, normal, nowrap);
+    padding: 10px;
+    background-color: $color-bg-menu;
+    width: 100%;
+  }
+}
+
+.mobileMenuItem {
+  color: $color-a;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 21px;
+  padding: 10px;
+  cursor: pointer;
+  transition: color 0.1s linear;
+
+  &:hover {
+    color: $color-a-hover;
+    transition: color 0.1s linear;
+  }
 }

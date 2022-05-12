@@ -12,7 +12,7 @@
 }
 
 .sectionStaking {
-  @include flex(column, center, normal, nowrap, 16px);
+  @include flex(column, center, normal, nowrap, 24px);
   position: relative;
   color: $color-text;
   background-color: $color-bg-section;
@@ -20,6 +20,15 @@
   max-width: 1280px;
   width: 100%;
   padding: 24px;
+}
+
+.status {
+  @include flex(row, center, center, wrap, 40px);
+  font-size: 24px;
+  line-height: 30px;
+  span {
+    text-transform: capitalize;
+  }
 }
 
 .sectionNfts {
@@ -109,6 +118,7 @@
 .button {
   @include flex(row, center, center, nowrap, 10px);
   text-align: center;
+  text-transform: uppercase;
   border-radius: 16px;
   padding: 18px 30px;
   background-color: $color-bg-button;
@@ -149,11 +159,28 @@
   @include flex(row, center, center, wrap, 16px);
   max-height: 450px;
   overflow: auto;
+}
 
+.nftsGalleryItem {
+  position: relative;
   img {
     width: 180px;
     height: 180px;
     object-fit: cover;
+    cursor: pointer;
+  }
+  > div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(40, 48, 61, 0.5);
+    text-align: center;
+  }
+}
+
+.nftsGalleryItemSelected {
+  img {
+    border: 2px solid white;
   }
 }
 
@@ -164,12 +191,27 @@
 
 .arrows {
   @include flex(row, center, center, nowrap, 20px);
+  > div {
+    @include b(tablet) {
+      transform: rotate(90deg);
+    }
+  }
   img {
     width: 30px;
     cursor: pointer;
   }
+}
 
-  @include b(tablet) {
-    transform: rotate(90deg);
-  }
+.variableReward {
+  color: $color-text-secondary;
+  font-size: 24px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.rewards {
+  text-align: center;
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: bold;
 }

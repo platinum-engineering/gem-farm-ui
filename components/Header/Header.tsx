@@ -1,196 +1,84 @@
-/** @jsxImportSource theme-ui */
-import Link from "next/link"
-import { Button, Container, Flex, Input, Text } from "@theme-ui/components"
-import WalletManager from "@/components/WalletManager/WalletManager"
-import { Dispatch, SetStateAction, useState } from "react"
+import React, { useState, useRef } from 'react'
 
-import { CloseIcon, MenuIcon } from "../icons"
 import s from './Header.module.scss'
+import useWindowSize from '../../hooks/useWindowSize'
+import useOnClickOutside from '../../hooks/useOnClickOutside'
+import Dropdown from "@/components/Dropdown/Dropdown";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 type Props = {
   onClick?: any
-  farmId?: string
-  setFarmId?: Dispatch<SetStateAction<string>>
 }
-const Header = ({ farmId, setFarmId, onClick }: Props) => {
-  const [isMobileMenuActive, setIsMobileMenuActive] = useState(false)
-  const [isChangingFarmId, setIsChangingFarmId] = useState(false)
 
-  return (
+const Header = ({ onClick }: Props) => {
+  const [open, setOpen] = useState(false)
+  const windowSize = useWindowSize()
+  const { width } = windowSize
+  const isMobile = width < 767
+
+  const refMenuButton = useRef(null);
+  const refMobileMenu = useRef(null);
+  useOnClickOutside([refMobileMenu, refMenuButton], () => setOpen(false))
+
+  if (isMobile) return (
   <header className={s.header} onClick={onClick}>
-    <div className={s.left}>
-      <img className={s.logo} src="/images/logo.png" alt="Astrobabies" />
-      <div className={s.logoText}>
-        Astro Babies
+    <div>
+      <div className={s.left}>
+        <img className={s.logo} src="/images/logo.png" alt="Astrobabies" />
+        <div className={s.logoText}>
+          Astro Babies
+        </div>
       </div>
+      <div className={s.right}>
+        {open ?
+        <div ref={refMenuButton} className={s.menuButton} onClick={() => setOpen(false)}>
+          <img className={s.menuButtonClose} src="/icons/close.svg" alt="Close"/>
+        </div>
+        :
+        <div className={s.menuButton} onClick={() => setOpen(true)}>
+          <img className={s.menuButtonOpen} src="/icons/menu.svg" alt="Menu"/>
+        </div>
+        }
+      </div>
+      {open &&
+      <div ref={refMobileMenu} className={s.mobileMenu}>
+        <div>
+          <div className={s.mobileMenuItem}>
+            <WalletMultiButton className={s.button} />
+          </div>
+          <div className={s.mobileMenuItem}>Tesla Giveaway</div>
+          <div className={s.mobileMenuItem}>Minting</div>
+          <div className={s.mobileMenuItem}>Litepaper</div>
+          <div className={s.mobileMenuItem}>Press</div>
+          <div className={s.mobileMenuItem}>FAQ</div>
+        </div>
+      </div>
+      }
     </div>
-    <nav className={s.right}>
-      <div className={s.rightItem}>Tesla Giveaway</div>
-      <div className={s.rightItem}>Minting</div>
-      <div className={s.rightItem}>Litepaper</div>
-      <div className={s.rightItem}>Press</div>
-      <div className={s.rightItem}>FAQ</div>
-    </nav>
   </header>
   )
 
-  // todo: remove after copying functionality
   return (
-    <Flex
-      sx={{
-        position: "sticky",
-        top: 0,
-        zIndex: 9,
-        background: (theme) => theme.colors?.backgroundGradient,
-        borderBottom: "1px solid",
-        borderColor: "background2",
-      }}
-    >
-      <Container>
-        <Flex
-          sx={{
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-          p=".8rem"
-        >
-          <Link href="/" passHref>
-            <Flex as="a" sx={{ alignItems: "center", flexDirection: "column" }}>
-              <Flex sx={{ alignItems: "center" }}>
-                <Text as="h1" variant="headingSpecial" ml=".4rem">
-                  GEM
-                </Text>
-
-                <img
-                  sx={{
-                    maxHeight: "4.8rem",
-                  }}
-                  src="/images/gemtransparent.gif"
-                  alt="Gemworks"
-                />
-
-                <Text as="h1" variant="headingSpecial" ml=".4rem">
-                  FARM
-                </Text>
-              </Flex>
-              {/* <Text
-                sx={{
-                  display: "block",
-                }}
-                variant="small"
-              >
-                by Gemworks
-              </Text> */}
-            </Flex>
-          </Link>
-          <Text
-            variant="small"
-            sx={{
-              marginRight: "auto",
-            }}
-          >
-            &nbsp;&nbsp;&nbsp;&#8226;&nbsp;
-            {process.env.NEXT_PUBLIC_CONNECTION_NETWORK}
-          </Text>
-
-          <Flex
-            as="nav"
-            sx={{
-              gap: "1.6rem",
-              display: "none",
-              alignItems: "center",
-
-              /** Mobile styles when the menu is active */
-              ...(isMobileMenuActive && {
-                display: "flex",
-                position: "fixed",
-                flexDirection: "column",
-                alignItems: "center",
-                top: "0",
-                left: "0",
-                width: "100vw",
-                height: "100vh",
-                padding: "1.6rem",
-                transition:
-                  "opacity 0.125s cubic-bezier(0.175, 0.885, 0.32, 1.275),visibility 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                backgroundColor: "background",
-                zIndex: 99,
-
-                "& > a": {
-                  marginBottom: ".8rem",
-                },
-
-                "&.active": {
-                  visibility: "visible",
-                  opacity: 1,
-                },
-              }),
-
-              /** Desktop styles (reset mobile) */
-              "@media (min-width: 768px)": {
-                display: "flex",
-                flexDirection: "row",
-                width: "auto",
-                height: "auto",
-                padding: 0,
-                position: "relative",
-              },
-            }}
-          >
-            <Button
-              sx={{
-                alignSelf: "flex-end",
-                padding: ".8rem",
-
-                ...(!isMobileMenuActive && { display: "none" }),
-              }}
-              onClick={() => setIsMobileMenuActive(false)}
-            >
-              <CloseIcon />
-            </Button>
-            {isChangingFarmId && (
-              <Input
-                sx={{
-                  fontSize: "1.1rem",
-                  padding: ".4rem",
-                  border: "none",
-                  borderBottom: "1px solid",
-                  borderRadius: 0,
-                  width: "auto",
-                }}
-                value={farmId}
-                onChange={(e) => setFarmId(e.target.value)}
-              />
-            )}
-
-            <a
-              tabIndex={0}
-              sx={{
-                margin: "0 auto",
-                fontSize: "1.1rem",
-                whiteSpace: "nowrap",
-              }}
-              onClick={() => setIsChangingFarmId((prev) => !prev)}
-            >
-              (Change Farm ID)
-            </a>
-
-            <WalletManager />
-          </Flex>
-          <Button
-            sx={{
-              padding: ".8rem",
-              "@media(min-width: 768px)": {
-                display: "none",
-              },
-            }}
-            onClick={() => setIsMobileMenuActive(true)}
-          >
-            <MenuIcon />
-          </Button>
-        </Flex>
-      </Container>
-    </Flex>
+  <header className={s.header} onClick={onClick}>
+    <div>
+      <div className={s.left}>
+        <img className={s.logo} src="/images/logo.png" alt="Astrobabies" />
+        <div className={s.logoText}>
+          Astro Babies
+        </div>
+      </div>
+      <nav className={s.right}>
+        <div className={s.rightItem}>Tesla Giveaway</div>
+        <div className={s.rightItem}>Minting</div>
+        <div className={s.rightItem}>Litepaper</div>
+        <div className={s.rightItem}>Press</div>
+        <div className={s.rightItem}>FAQ</div>
+        <div className={s.rightItem}>
+          <WalletMultiButton className={s.button} />
+        </div>
+      </nav>
+    </div>
+  </header>
   )
 }
 
