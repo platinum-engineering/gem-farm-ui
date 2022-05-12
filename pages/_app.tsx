@@ -43,4 +43,6 @@ function App(props: AppProps) {
   )
 }
 
+export default App;
+
 // export default withGA(process.env.NEXT_PUBLIC_GA_ID, Router)(App)
