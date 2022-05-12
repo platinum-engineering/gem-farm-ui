@@ -1,0 +1,31 @@
+variables:
+  BUILD_PATH: ./out
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: node:lts-bullseye
+  tags:
+    - docker-executor
+    - builder
+  only: &cd_refs
+    refs:
+      - master
+  script:
+    - npm config set update-notifier false
+    - npm install
+    - npm run build
+    - npm run export
+    - find ${BUILD_PATH} -type f -regextype posix-extended -regex '.+\.(js|css|html|svg)$' -exec gzip --keep --best --quiet --force {} \;
+  artifacts:
+    name: "CompiledProject"
+    expire_in: 1 days
+    paths:
+      - ${BUILD_PATH}
+
+include:
+  - project: devops/templates
+    file: /static/noah-domain-[prod].yml
