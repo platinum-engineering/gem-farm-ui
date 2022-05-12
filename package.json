@@ -6,6 +6,8 @@
     "dev": "NODE_ENV=dev next dev",
     "dev:windows": "set \"NODE_ENV=dev\" && next dev",
     "build": "next build",
+    "export": "next build && next export",
+    "export:serve": "cd out && serve",
     "start": "next start",
     "lint": "next lint"
   },

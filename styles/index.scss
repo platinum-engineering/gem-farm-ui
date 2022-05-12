@@ -16,6 +16,10 @@ body {
   @include b(tablet) {
     padding: calc(130px + 60px) 30px 0 30px;
   }
+
+  @include b(mobile) {
+    padding: calc(82px + 60px) 30px 0 30px;
+  }
 }
 
 button {

@@ -177,7 +177,7 @@ const StakePage = () => {
             <p>Staked farmer count: {farmAccount?.stakedFarmerCount?.toNumber() || 0}</p>
             <h1 className={s.h1}>Astro Babies Staked: {farmAccount?.gemsStaked?.toNumber() || 0}</h1>
             <div className={s.description}>
-              Select your Astro Babies and move them into "Your Stake", lock and start to begin staking
+              Select your Astro Babies and move them into &quot;Your Stake&quot;, lock and start to begin staking
             </div>
           </div>
           <div className={s.nfts}>

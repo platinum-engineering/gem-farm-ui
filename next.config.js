@@ -1,10 +1,6 @@
 const isProd = process.env.NODE_ENV.trim() === 'production'
 const envFileName = isProd ? '.env' : '.env.' + process.env.NODE_ENV.trim()
 require('dotenv').config({ path: envFileName })
-console.log({
-  NODE_ENV: process.env.NODE_ENV,
-  envFileName,
-})
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
