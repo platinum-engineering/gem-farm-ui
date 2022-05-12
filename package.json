@@ -22,6 +22,7 @@
     "dotenv": "^16.0.1",
     "next": "12.1.4",
     "next-ga": "^2.3.4",
+    "numeral": "^2.0.6",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-tabs": "^4.2.0",

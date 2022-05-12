@@ -1,5 +1,7 @@
 /** @jsxImportSource theme-ui */
 import React, { useCallback, useEffect, useState, useMemo } from "react"
+import Head from 'next/head';
+import numeral from 'numeral';
 
 import { Flex, Text, Heading, Spinner, Button, Container } from "theme-ui"
 
@@ -85,10 +87,16 @@ const StakePage = () => {
     connect: mode === 'connect',
   }
 
-  const availableToClaim = useMemo(() => (availableA / 1000000000).toFixed(2), [availableA]);
+  const availableToClaim = useMemo(() => numeral((availableA / 1000000000).toFixed(2)).format('0,0.00'), [availableA]);
+  const variableReward = useMemo(() => {
+    return numeral((farmerAccount?.rewardA?.variableRate?.lastRecordedAccruedRewardPerRarityPoint?.n || 0) / 10 ** 3).format('0,0.0')
+  }, [farmerAccount]);
 
   return (
     <div className={theme}>
+      <Head>
+        <link rel="shortcut icon" href="/favicon.png" />
+      </Head>
       <Header />
       <div className="app">
 
@@ -291,8 +299,8 @@ const StakePage = () => {
           </div>
           <h2 className={s.h2}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h2>
           <div className={s.variableReward}>
-            <div>Variable reward:</div>
-            <div>Last recorded: Nan</div>
+            <div>Variable reward</div>
+            <div>Last recorded: {variableReward}</div>
           </div>
           <div className={s.rewards}>
             <div>Total rewards:</div>
