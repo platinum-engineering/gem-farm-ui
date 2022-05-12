@@ -1,21 +1,16 @@
-/** @jsxImportSource theme-ui */
 import React, { useCallback, useEffect, useState, useMemo } from "react"
 import Head from 'next/head';
 import numeral from 'numeral';
-
-import { Flex, Text, Heading, Spinner, Button, Container } from "theme-ui"
-
 import CollectionItem from "@/components/CollectionItem/CollectionItem"
-import useGemFarmStaking from "hooks/useGemFarmStaking"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
+import useGemFarmStaking from "hooks/useGemFarmStaking"
 import Header from "@/components/Header/Header"
-import { LoadingIcon } from "@/components/icons/LoadingIcon"
 import s from '../styles/index.page.module.scss'
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { NetworksNames } from "../constants/networks";
+import { MyAssociatedActions, MyState, useGlobal } from "@/hooks/useGlobalHook";
 
 const StakePage = () => {
   const [farmId] = useState(process.env.NEXT_PUBLIC_GEMFARM_ID || "")
@@ -41,7 +36,7 @@ const StakePage = () => {
     handleMoveToWalletButtonClick,
     handleVaultItemClick,
     handleInitStakingButtonClick,
-    handleRefreshRewardsButtonClick,
+    // handleRefreshRewardsButtonClick,
   } = useGemFarmStaking(farmId)
 
   const { publicKey } = useWallet()
@@ -83,7 +78,10 @@ const StakePage = () => {
 
   const [theme] = useState('theme-main')
 
-  const [network, setNetwork] = useState<string | number>('devnet')
+  const [network, setNetwork] = useGlobal<string, (value: string) => void>(
+  (state: MyState) => state.network,
+  (actions: MyAssociatedActions) => actions.setNetwork
+  );
   const handleChangeNetwork = (value: string | number) => {
     setNetwork(value)
   }

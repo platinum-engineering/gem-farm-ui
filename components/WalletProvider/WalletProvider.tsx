@@ -18,18 +18,22 @@ import {
   WalletDisconnectButton,
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui"
-import { clusterApiUrl } from "@solana/web3.js"
+import { MyAssociatedActions, MyState, useGlobal } from "@/hooks/useGlobalHook";
+// import { clusterApiUrl } from "@solana/web3.js"
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css")
 
 const Wallet: FC = ({ children }: { children: React.ReactChild }) => {
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
-  const network = process.env
+  const [networkDefault] = useGlobal<string, (value: string) => void>(
+  (state: MyState) => state.network,
+  );
+  const network = networkDefault || process.env
     .NEXT_PUBLIC_CONNECTION_NETWORK as WalletAdapterNetwork
+  console.log('Wallet:', { network })
 
-  const endpoint =
-    process.env.NEXT_PUBLIC_CONNECTION_NETWORK == "devnet"
+  const endpoint = network === "devnet"
       ? process.env.NEXT_PUBLIC_SOLANA_RPC_HOST_DEVNET
       : process.env.NEXT_PUBLIC_SOLANA_RPC_HOST_MAINNET_BETA
 

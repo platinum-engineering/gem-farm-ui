@@ -3719,6 +3719,11 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+use-global-hook@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/use-global-hook/-/use-global-hook-0.3.0.tgz#bea26e1afe9fc12ef34c04c1646412f7ee65896e"
+  integrity sha512-uzQmqPuBUEZV4oJOpnhnwLEVkGOfc471k6uul1SgNM43HWS3ZjL8tb1QKa2VjoGPNk40nvnl8kndZnIyiVNvtA==
+
 utf-8-validate@^5.0.2:
   version "5.0.9"
   resolved "https://registry.yarnpkg.com/utf-8-validate/-/utf-8-validate-5.0.9.tgz#ba16a822fbeedff1a58918f2a6a6b36387493ea3"

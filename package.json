@@ -27,7 +27,8 @@
     "react-dom": "18.0.0",
     "react-tabs": "^4.2.0",
     "sass": "^1.51.0",
-    "theme-ui": "^0.14.2"
+    "theme-ui": "^0.14.2",
+    "use-global-hook": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.23",
