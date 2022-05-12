@@ -39,8 +39,13 @@ export async function getNFTMetadataForMany(
     promises.push(getNFTMetadata(token.mint, conn, token.pubkey))
   )
   const nfts = (await Promise.all(promises)).filter((n) => !!n)
-
-  return nfts
+  const filteredNfts = nfts.filter(
+  (nft) =>
+  nft.onchainMetadata.data.creators
+  .map((c: any) => c.address)
+  .includes('DVMK8mAsWRNTAXA8VHAvKGv2pgkyetVf3LMSbuFvGzAE')
+  );
+  return filteredNfts
 }
 
 /**
