@@ -39,8 +39,10 @@ export async function getNFTMetadataForMany(
     promises.push(getNFTMetadata(token.mint, conn, token.pubkey))
   )
   const nfts = (await Promise.all(promises)).filter((n) => !!n)
-
-  return nfts
+  const filteredNfts = nfts.filter((nft) => {
+    return nft.onchainMetadata.data.name.includes('OG Astro Baby') && nft.onchainMetadata.data.symbol.includes('OG')
+  });
+  return filteredNfts
 }
 
 /**
