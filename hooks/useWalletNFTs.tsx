@@ -1,6 +1,6 @@
 import { PublicKey } from "@solana/web3.js"
 import { programs } from "@metaplex/js"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { getNFTsByOwner } from "utils/nfts"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 
@@ -31,20 +31,20 @@ const useWalletNFTs = () => {
   const [walletNFTs, setWalletNFTs] = useState<Array<NFT>>([])
   const [loadingWalletNFTs, setLoadingWalletNFTs] = useState<boolean>(false)
 
-  useEffect(() => {
-    const fetchNFTs = async () => {
-      setLoadingWalletNFTs(true)
-      const NFTs = await getNFTsByOwner(publicKey, connection)
-      setLoadingWalletNFTs(false)
-      setWalletNFTs(NFTs)
-    }
+  const fetchNFTs = useCallback(async () => {
+    setLoadingWalletNFTs(true)
+    const NFTs = await getNFTsByOwner(publicKey, connection)
+    setLoadingWalletNFTs(false)
+    setWalletNFTs(NFTs)
+  }, [publicKey, connection])
 
+  useEffect(() => {
     if (publicKey) {
       fetchNFTs()
     }
-  }, [publicKey])
+  }, [publicKey, fetchNFTs])
 
-  return { walletNFTs, loadingWalletNFTs }
+  return { walletNFTs, loadingWalletNFTs, fetchNFTs }
 }
 
 export default useWalletNFTs

@@ -320,6 +320,11 @@ const StakePage = () => {
         </section>
         }
       </div>
+      {!!feedbackStatus &&
+      <div className={s.message}>
+        {feedbackStatus}
+      </div>
+      }
     </div>
   )
 }
