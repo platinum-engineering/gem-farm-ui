@@ -37,12 +37,12 @@ export async function getNFTMetadataForMany(
   tokens.forEach((token) =>
     promises.push(getNFTMetadata(token.mint, conn, token.pubkey))
   )
-  const nfts = (await Promise.allSettled(promises)).filter((n) => !!n)
-  console.log('getNFTMetadataForMany:', { nfts })
-  // const filteredNfts = nfts.filter((nft) => {
-  //   return nft.onchainMetadata.data.name.includes('OG Astro Baby') && nft.onchainMetadata.data.symbol.includes('OG')
-  // });
-  return []
+  const nfts = (await Promise.all(promises)).filter((n) => !!n)
+  const filteredNfts = nfts.filter((nft) => {
+    return nft.onchainMetadata.data.name.includes('OG Astro Baby') && nft.onchainMetadata.data.symbol.includes('OG')
+  });
+  console.log('getNFTMetadataForMany:', { filteredNfts })
+  return filteredNfts
 }
 
 /**

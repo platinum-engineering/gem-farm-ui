@@ -63,33 +63,34 @@ export async function getNFTMetadataForMany(
     tokens.forEach((token: any, i: number) => {
       promisesNFTOnchainMetadata.push(getNFTOnchainMetadata(conn, nftsPDA[i].value))
     })
-    let nftsOnchainMetadata: any = await Promise.allSettled(promisesNFTOnchainMetadata)
+    const nftsOnchainMetadata: any = await Promise.allSettled(promisesNFTOnchainMetadata)
     console.log('getNFTMetadataForMany:', {
       nftsOnchainMetadata,
     })
-    nftsOnchainMetadata = nftsOnchainMetadata.filter((item) => {
-      return !!item.value &&
-      item.value.data.data.name.includes('OG Astro Baby') &&
-      item.value.data.data.symbol === 'OG'
-    })
+    const arrayForFilter = nftsOnchainMetadata.map((item) => !!item.value &&
+    item.value.data.data.name.includes('OG Astro Baby') &&
+    item.value.data.data.symbol === 'OG')
+    const nftsOnchainMetadataFiltered = nftsOnchainMetadata.filter((item, i) => arrayForFilter[i])
+    const tokensFiltered = tokens.filter((item, i) => arrayForFilter[i])
 
     const promisesNFTExternalMetadata: Promise<any>[] = []
-    nftsOnchainMetadata.forEach((item: any) => {
+    nftsOnchainMetadataFiltered.forEach((item: any) => {
       promisesNFTExternalMetadata.push(getNFTExternalMetadata(item.value.data.data.uri))
     })
     const nftsExternalMetadata = await Promise.allSettled(promisesNFTExternalMetadata)
     console.log('getNFTMetadataForMany:', {
+      tokensFiltered,
       nftsExternalMetadata,
     })
 
-    const result: NFT[] = nftsOnchainMetadata.map((item: any, i: number) => {
-      const onchainMetadataResult: any = nftsOnchainMetadata[i]
+    const result: NFT[] = nftsOnchainMetadataFiltered.map((item: any, i: number) => {
       const externalMetadataResult: any = nftsExternalMetadata[i]
-      const pubkey = onchainMetadataResult.value.pubkey
+      const pubkey = tokensFiltered[i].pubkey
+      const mint = tokensFiltered[i].mint
       return {
         pubkey: pubkey ? new PublicKey(pubkey) : undefined,
-        mint: new PublicKey(onchainMetadataResult.value.data.mint),
-        onchainMetadata: onchainMetadataResult.value.data,
+        mint: new PublicKey(mint),
+        onchainMetadata: item.value.data,
         externalMetadata: externalMetadataResult.value,
       }
     })
