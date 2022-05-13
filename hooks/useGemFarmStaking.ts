@@ -330,7 +330,13 @@ const useGemFarmStaking = (farmId: string) => {
       // selectedNFTs.value = [];
     } catch (e) {
       console.error(e);
-      setFeedbackStatus(e.message)
+      if (e.message.includes(`can't unstake, minimum staking period`)) {
+        setFeedbackStatus(`Can't unstake, minimum staking period has not passed yet`)
+      } else if (e.message.includes(`can't unstake, cooldown period`)) {
+        setFeedbackStatus(`Can't unstake, cooldown period has not passed yet`)
+      } else {
+        setFeedbackStatus(e.message)
+      }
     } finally {
       setTimeout(() => setFeedbackStatus(''), 5000)
     }
