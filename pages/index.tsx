@@ -14,9 +14,9 @@ import { MyAssociatedActions, MyState, useGlobal } from "@/hooks/useGlobalHook";
 
 const StakePage = () => {
   const [farmId] = useState(process.env.NEXT_PUBLIC_GEMFARM_ID || "")
-  const [walletNFTsFiltered, setWalletNFTsFiltered] = useState([])
 
   const {
+    loadingWalletNFTs,
     walletNFTs,
     farmAccount,
     farmerAccount,
@@ -41,15 +41,6 @@ const StakePage = () => {
 
   const { publicKey } = useWallet()
 
-  const filterNFTS = useCallback(() => {
-    try {
-      const walletNFTsFilteredNew = walletNFTs.filter((item) => !item.externalMetadata.name.includes('MARNO'))
-      setWalletNFTsFiltered(walletNFTsFilteredNew)
-    } catch (e) {
-      console.error(e);
-    }
-  }, [walletNFTs])
-
   useEffect(() => {
     if (!publicKey) return;
     console.log('StakePage:', {
@@ -66,15 +57,7 @@ const StakePage = () => {
       farmerVaultNFTs,
       selectedVaultItems,
     })
-    filterNFTS();
   }, [publicKey, walletNFTs])
-
-  useEffect(() => {
-    if (!walletNFTsFiltered) return;
-    console.log('StakePage:', {
-      walletNFTsFiltered,
-    })
-  }, [walletNFTsFiltered])
 
   const [theme] = useState('theme-main')
 
@@ -206,7 +189,9 @@ const StakePage = () => {
             <section className={s.sectionNfts}>
               <h1>Your wallet</h1>
               <div className={s.nftsGallery}>
-                {walletNFTs.length ? walletNFTs.map((item) => {
+                {loadingWalletNFTs ?
+                <div>Loading...</div> :
+                walletNFTs.length ? walletNFTs.map((item) => {
                   const isSelected = selectedWalletItems.find(
                   (NFT) =>
                   NFT.onchainMetadata.mint ===

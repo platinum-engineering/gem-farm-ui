@@ -9,24 +9,34 @@ const {
   metadata: { Metadata },
 } = programs
 
-async function getNFTMetadata(
-  mint: string,
+async function getNFTOnchainMetadata(
   conn: Connection,
-  pubkey?: string
+  metadataPDA: string
+): Promise<any> {
+  try {
+    const onchainMetadata = Metadata.load(conn, metadataPDA)
+    // console.log('getNFTOnchainMetadata:', {
+    //   onchainMetadata,
+    // })
+    return onchainMetadata
+  } catch (e) {
+    console.error('getNFTOnchainMetadata:', e)
+    return null
+  }
+}
+
+async function getNFTExternalMetadata(
+  uri: string,
 ): Promise<NFT | undefined> {
   try {
-    const metadataPDA = await Metadata.getPDA(mint)
-    const onchainMetadata = (await Metadata.load(conn, metadataPDA)).data
-    const externalMetadata = (await axios.get(onchainMetadata.data.uri)).data
-
-    return {
-      pubkey: pubkey ? new PublicKey(pubkey) : undefined,
-      mint: new PublicKey(mint),
-      onchainMetadata,
+    const externalMetadata = (await axios.get(uri)).data
+    console.log('getNFTExternalMetadata:', {
       externalMetadata,
-    }
+    })
+    return externalMetadata
   } catch (e) {
-    // console.log(`failed to pull metadata for token ${mint}`)
+    console.error('getNFTExternalMetadata:', e)
+    return null
   }
 }
 
@@ -34,15 +44,58 @@ export async function getNFTMetadataForMany(
   tokens: any[],
   conn: Connection
 ): Promise<NFT[]> {
-  const promises: Promise<NFT | undefined>[] = []
-  tokens.forEach((token) =>
-    promises.push(getNFTMetadata(token.mint, conn, token.pubkey))
-  )
-  const nfts = (await Promise.all(promises)).filter((n) => !!n)
-  const filteredNfts = nfts.filter((nft) => {
-    return nft.onchainMetadata.data.name.includes('OG Astro Baby') && nft.onchainMetadata.data.symbol.includes('OG')
-  });
-  return filteredNfts
+  try {
+    const promisesNFTPDA: Promise<any>[] = []
+    tokens.forEach((token) => {
+      promisesNFTPDA.push(Metadata.getPDA(token.mint))
+    })
+    const nftsPDA = await Promise.allSettled(promisesNFTPDA)
+    .catch(function(err) {
+      console.error(err); // some coding error in handling happened
+    });
+    console.log('getNFTMetadataForMany:', {
+      tokens,
+      promisesNFTPDA,
+      nftsPDA,
+    })
+
+    const promisesNFTOnchainMetadata: Promise<any>[] = []
+    tokens.forEach((token: any, i: number) => {
+      promisesNFTOnchainMetadata.push(getNFTOnchainMetadata(conn, nftsPDA[i].value))
+    })
+    let nftsOnchainMetadata = await Promise.allSettled(promisesNFTOnchainMetadata)
+    console.log('getNFTMetadataForMany:', {
+      nftsOnchainMetadata,
+    })
+    nftsOnchainMetadata = nftsOnchainMetadata.filter((item) => {
+      return !!item.value &&
+      item.value.data.data.name.includes('OG Astro Baby') &&
+      item.value.data.data.symbol === 'OG'
+    })
+
+    const promisesNFTExternalMetadata: Promise<any>[] = []
+    nftsOnchainMetadata.forEach((item: any) => {
+      promisesNFTExternalMetadata.push(getNFTExternalMetadata(item.value.data.data.uri))
+    })
+    const nftsExternalMetadata = await Promise.allSettled(promisesNFTExternalMetadata)
+    console.log('getNFTMetadataForMany:', {
+      nftsExternalMetadata,
+    })
+
+    const result = nftsOnchainMetadata.map((item: any, i: number) => {
+      const pubkey = nftsOnchainMetadata[i].value.pubkey
+      return {
+        pubkey: pubkey ? new PublicKey(pubkey) : undefined,
+        mint: new PublicKey(nftsOnchainMetadata[i].value.data.mint),
+        onchainMetadata: nftsOnchainMetadata[i].value,
+        externalMetadata: nftsExternalMetadata[i].value,
+      }
+    })
+    return result
+  } catch (e) {
+    console.error('getNFTMetadataForMany:', e);
+    return []
+  }
 }
 
 /**
@@ -60,7 +113,6 @@ export async function getNFTsByOwner(
   const tokens = tokenAccounts.value
     .filter((tokenAccount) => {
       const amount = tokenAccount.account.data.parsed.info.tokenAmount
-
       return amount.decimals === 0 && amount.uiAmount === 1
     })
     .map((tokenAccount) => {

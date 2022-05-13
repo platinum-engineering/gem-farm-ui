@@ -14,12 +14,13 @@ import { GemBank } from "lib/gem-farm/common/gem-bank"
 const useGemFarmStaking = (farmId: string) => {
   const { connection } = useConnection()
   const wallet = useAnchorWallet() as SignerWalletAdapter
-  const { walletNFTs } = useWalletNFTs()
+  const { walletNFTs, loadingWalletNFTs } = useWalletNFTs()
 
   const [farmAccount, setFarmAccount] = useState<any>(null) // @TODO add type to farmAccount
   const [farmerAccount, setFarmerAccount] = useState<any>(null) // @TODO add type to farmerAccount
   const [farmerStatus, setFarmerStatus] = useState<any>(null)
   const [farmerVaultAccount, setFarmerVaultAccount] = useState<any>(null)
+  const [loadingFarmerVaultNFTs, setLoadingFarmerVaultNFTs] = useState<boolean>(false)
   const [farmerVaultNFTs, setFarmerVaultNFTs] = useState<NFT[] | null>(null)
   const [selectedWalletItems, setSelectedWalletItems] = useState<NFT[]>([])
   const [selectedVaultItems, setSelectedVaultItems] = useState<NFT[]>([])
@@ -108,7 +109,7 @@ const useGemFarmStaking = (farmId: string) => {
       ) {
         try {
           console.log("[Staking Hook] Fetching farmer vault...")
-
+          setLoadingFarmerVaultNFTs(true)
           /**
            * Fetch GDR (Gem Deposit Receipts) from the farmer vault
            */
@@ -132,6 +133,7 @@ const useGemFarmStaking = (farmId: string) => {
           /**
            * Set Vault NFTs state
            */
+          setLoadingFarmerVaultNFTs(false)
           setFarmerVaultNFTs(currentVaultNFTs)
         } catch (e) {
           console.log(e)
@@ -361,6 +363,7 @@ const useGemFarmStaking = (farmId: string) => {
     : null
 
   return {
+    loadingWalletNFTs,
     walletNFTs,
     farmAccount,
     farmerAccount,
