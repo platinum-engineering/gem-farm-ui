@@ -8,10 +8,12 @@
   --color-bg: #000;
   --color-bg-header: transparent;
   --color-bg-section: rgba(255, 255, 255, 0.15);
+  --color-bg-message: rgba(40, 48, 61, 0.8);
   --color-bg-button: #28303D;
   --color-bg-menu: #152234;
   --color-bg-dropdown: #28303D;
   --color-bg-dropdown-hover: #485262;
+  --color-bg-scrollbar: #28303D;
   // colors for text
   --color-header: #FFF;
   --color-text: #FFF;
@@ -36,10 +38,12 @@
 $color-bg: var(--color-bg);
 $color-bg-header: var(--color-bg-header);
 $color-bg-section: var(--color-bg-section);
+$color-bg-message: var(--color-bg-message);
 $color-bg-button: var(--color-bg-button);
 $color-bg-menu: var(--color-bg-menu);
 $color-bg-dropdown: var(--color-bg-dropdown);
 $color-bg-dropdown-hover: var(--color-bg-dropdown-hover);
+$color-bg-scrollbar: var(--color-bg-scrollbar);
 
 // colors for text
 $color-header: var(--color-header);

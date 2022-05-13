@@ -190,8 +190,9 @@
 }
 
 .arrows {
-  @include flex(row, center, center, nowrap, 20px);
+  @include flex(row, center, center, nowrap);
   > div {
+    @include flex(row, center, center, nowrap, 20px);
     @include b(tablet) {
       transform: rotate(90deg);
     }
@@ -214,4 +215,14 @@
   font-size: 24px;
   line-height: 30px;
   font-weight: bold;
+}
+
+.message {
+  z-index: 100;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: $color-bg-message;
+  padding: 10px 20px;
+  text-align: center;
 }

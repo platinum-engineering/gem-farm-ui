@@ -30,9 +30,9 @@ async function getNFTExternalMetadata(
 ): Promise<NFT | undefined> {
   try {
     const externalMetadata = (await axios.get(uri)).data
-    console.log('getNFTExternalMetadata:', {
-      externalMetadata,
-    })
+    // console.log('getNFTExternalMetadata:', {
+    //   externalMetadata,
+    // })
     return externalMetadata
   } catch (e) {
     console.error('getNFTExternalMetadata:', e)
@@ -63,41 +63,43 @@ export async function getNFTMetadataForMany(
     tokens.forEach((token: any, i: number) => {
       promisesNFTOnchainMetadata.push(getNFTOnchainMetadata(conn, nftsPDA[i].value))
     })
-    let nftsOnchainMetadata = await Promise.allSettled(promisesNFTOnchainMetadata)
+    const nftsOnchainMetadata: any = await Promise.allSettled(promisesNFTOnchainMetadata)
     console.log('getNFTMetadataForMany:', {
       nftsOnchainMetadata,
     })
-    nftsOnchainMetadata = nftsOnchainMetadata.filter((item) => {
-      // @ts-ignore
-      return !!item.value &&
-      // @ts-ignore
-      item.value.data.data.name.includes('OG Astro Baby') &&
-      // @ts-ignore
-      item.value.data.data.symbol === 'OG'
-    })
+    // @ts-ignore
+    const arrayForFilter = nftsOnchainMetadata.map((item) => !!item.value &&
+    // @ts-ignore
+    item.value.data.data.name.includes('OG Astro Baby') &&
+    // @ts-ignore
+    item.value.data.data.symbol === 'OG')
+    const nftsOnchainMetadataFiltered = nftsOnchainMetadata.filter((item, i) => arrayForFilter[i])
+    const tokensFiltered = tokens.filter((item, i) => arrayForFilter[i])
 
     const promisesNFTExternalMetadata: Promise<any>[] = []
-    nftsOnchainMetadata.forEach((item: any) => {
+    nftsOnchainMetadataFiltered.forEach((item: any) => {
+      // @ts-ignore
       promisesNFTExternalMetadata.push(getNFTExternalMetadata(item.value.data.data.uri))
     })
     const nftsExternalMetadata = await Promise.allSettled(promisesNFTExternalMetadata)
     console.log('getNFTMetadataForMany:', {
+      tokensFiltered,
       nftsExternalMetadata,
     })
 
-    const result = nftsOnchainMetadata.map((item: any, i: number) => {
-      // @ts-ignore
-      const pubkey = nftsOnchainMetadata[i].value.pubkey
+    const result: NFT[] = nftsOnchainMetadataFiltered.map((item: any, i: number) => {
+      const externalMetadataResult: any = nftsExternalMetadata[i]
+      const pubkey = tokensFiltered[i].pubkey
+      const mint = tokensFiltered[i].mint
       return {
         pubkey: pubkey ? new PublicKey(pubkey) : undefined,
+        mint: new PublicKey(mint),
         // @ts-ignore
-        mint: new PublicKey(nftsOnchainMetadata[i].value.data.mint),
-        // @ts-ignore
-        onchainMetadata: nftsOnchainMetadata[i].value,
-        // @ts-ignore
-        externalMetadata: nftsExternalMetadata[i].value,
+        onchainMetadata: item.value.data,
+        externalMetadata: externalMetadataResult.value,
       }
     })
+    console.log('getNFTMetadataForMany:', { result })
     return result
   } catch (e) {
     console.error('getNFTMetadataForMany:', e);
