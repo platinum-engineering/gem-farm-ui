@@ -68,8 +68,11 @@ export async function getNFTMetadataForMany(
       nftsOnchainMetadata,
     })
     nftsOnchainMetadata = nftsOnchainMetadata.filter((item) => {
+      // @ts-ignore
       return !!item.value &&
+      // @ts-ignore
       item.value.data.data.name.includes('OG Astro Baby') &&
+      // @ts-ignore
       item.value.data.data.symbol === 'OG'
     })
 
@@ -83,11 +86,15 @@ export async function getNFTMetadataForMany(
     })
 
     const result = nftsOnchainMetadata.map((item: any, i: number) => {
+      // @ts-ignore
       const pubkey = nftsOnchainMetadata[i].value.pubkey
       return {
         pubkey: pubkey ? new PublicKey(pubkey) : undefined,
+        // @ts-ignore
         mint: new PublicKey(nftsOnchainMetadata[i].value.data.mint),
+        // @ts-ignore
         onchainMetadata: nftsOnchainMetadata[i].value,
+        // @ts-ignore
         externalMetadata: nftsExternalMetadata[i].value,
       }
     })
