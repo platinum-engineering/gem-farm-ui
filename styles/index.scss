@@ -43,6 +43,11 @@ button:disabled {
   cursor: auto;
 }
 
+* {
+  scrollbar-color: #55576d #28303D;
+  scrollbar-width: thin;
+}
+
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;

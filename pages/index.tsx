@@ -293,7 +293,7 @@ const StakePage = () => {
           <div>
             <div className={s.status}>
               <div>State:</div>
-              <span>{farmerStatus}</span>
+              <span>{farmerStatus}{!!isLocked && ' & locked'}</span>
             </div>
           </div>
           <h2 className={s.h2}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h2>

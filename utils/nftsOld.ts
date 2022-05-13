@@ -18,10 +18,6 @@ async function getNFTMetadata(
     const metadataPDA = await Metadata.getPDA(mint)
     const onchainMetadata = (await Metadata.load(conn, metadataPDA)).data
     const externalMetadata = (await axios.get(onchainMetadata.data.uri)).data
-    console.log('getNFTMetadata:', {
-      onchainMetadata,
-      externalMetadata,
-    })
     return {
       pubkey: pubkey ? new PublicKey(pubkey) : undefined,
       mint: new PublicKey(mint),

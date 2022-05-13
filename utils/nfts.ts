@@ -30,9 +30,9 @@ async function getNFTExternalMetadata(
 ): Promise<NFT | undefined> {
   try {
     const externalMetadata = (await axios.get(uri)).data
-    console.log('getNFTExternalMetadata:', {
-      externalMetadata,
-    })
+    // console.log('getNFTExternalMetadata:', {
+    //   externalMetadata,
+    // })
     return externalMetadata
   } catch (e) {
     console.error('getNFTExternalMetadata:', e)
@@ -63,7 +63,7 @@ export async function getNFTMetadataForMany(
     tokens.forEach((token: any, i: number) => {
       promisesNFTOnchainMetadata.push(getNFTOnchainMetadata(conn, nftsPDA[i].value))
     })
-    let nftsOnchainMetadata = await Promise.allSettled(promisesNFTOnchainMetadata)
+    let nftsOnchainMetadata: any = await Promise.allSettled(promisesNFTOnchainMetadata)
     console.log('getNFTMetadataForMany:', {
       nftsOnchainMetadata,
     })
@@ -82,15 +82,18 @@ export async function getNFTMetadataForMany(
       nftsExternalMetadata,
     })
 
-    const result = nftsOnchainMetadata.map((item: any, i: number) => {
-      const pubkey = nftsOnchainMetadata[i].value.pubkey
+    const result: NFT[] = nftsOnchainMetadata.map((item: any, i: number) => {
+      const onchainMetadataResult: any = nftsOnchainMetadata[i]
+      const externalMetadataResult: any = nftsExternalMetadata[i]
+      const pubkey = onchainMetadataResult.value.pubkey
       return {
         pubkey: pubkey ? new PublicKey(pubkey) : undefined,
-        mint: new PublicKey(nftsOnchainMetadata[i].value.data.mint),
-        onchainMetadata: nftsOnchainMetadata[i].value,
-        externalMetadata: nftsExternalMetadata[i].value,
+        mint: new PublicKey(onchainMetadataResult.value.data.mint),
+        onchainMetadata: onchainMetadataResult.value.data,
+        externalMetadata: externalMetadataResult.value,
       }
     })
+    console.log('getNFTMetadataForMany:', { result })
     return result
   } catch (e) {
     console.error('getNFTMetadataForMany:', e);
