@@ -14,7 +14,7 @@ import { GemBank } from "lib/gem-farm/common/gem-bank"
 const useGemFarmStaking = (farmId: string) => {
   const { connection } = useConnection()
   const wallet = useAnchorWallet() as SignerWalletAdapter
-  const { walletNFTs, loadingWalletNFTs } = useWalletNFTs()
+  const { walletNFTs, loadingWalletNFTs, fetchNFTs } = useWalletNFTs()
 
   const [farmAccount, setFarmAccount] = useState<any>(null) // @TODO add type to farmAccount
   const [farmerAccount, setFarmerAccount] = useState<any>(null) // @TODO add type to farmerAccount
@@ -193,13 +193,6 @@ const useGemFarmStaking = (farmId: string) => {
       if (!gemBankClient)
         throw new Error("No Gem Bank client has been initialized.")
 
-      console.log({
-        farmAccount,
-        farmerAccount,
-        mint: mint.toString(),
-        source: source.toString(),
-        creator: creator.toString(),
-      })
       const { txSig } = await gemBankClient.depositGemWallet(
       new PublicKey(farmAccount.bank),
       new PublicKey(farmerAccount.vault),
@@ -264,7 +257,7 @@ const useGemFarmStaking = (farmId: string) => {
       }
 
       await fetchFarmerAccount(gemFarmClient, gemBankClient)
-      // await refetchNFTs()
+      await fetchNFTs()
 
       setSelectedVaultItems([])
       setSelectedWalletItems([])
@@ -287,7 +280,7 @@ const useGemFarmStaking = (farmId: string) => {
       }
 
       await fetchFarmerAccount(gemFarmClient, gemBankClient)
-      // await refetchNFTs()
+      await fetchNFTs()
 
       setSelectedVaultItems([])
       setSelectedWalletItems([])
@@ -310,7 +303,7 @@ const useGemFarmStaking = (farmId: string) => {
       await connection.confirmTransaction(txSig)
 
       await fetchFarmerAccount(gemFarmClient, gemBankClient)
-      // await refetchNFTs()
+      await fetchNFTs()
 
       // selectedNFTs.value = [];
     } catch (e) {
@@ -332,7 +325,7 @@ const useGemFarmStaking = (farmId: string) => {
       await connection.confirmTransaction(txSig)
 
       await fetchFarmerAccount(gemFarmClient, gemBankClient)
-      // await refetchNFTs()
+      await fetchNFTs()
 
       // selectedNFTs.value = [];
     } catch (e) {
@@ -358,7 +351,7 @@ const useGemFarmStaking = (farmId: string) => {
       await connection.confirmTransaction(txSig)
 
       await fetchFarmerAccount(gemFarmClient, gemBankClient)
-      // await refetchNFTs()
+      await fetchNFTs()
 
       // await fetchFarmer();
     } catch (e) {
@@ -382,7 +375,7 @@ const useGemFarmStaking = (farmId: string) => {
       await connection.confirmTransaction(txSig)
       // await fetchFarmer();
       await fetchFarmerAccount(gemFarmClient, gemBankClient)
-      // await refetchNFTs()
+      await fetchNFTs()
 
     } catch (e) {
       console.error(e);
@@ -406,7 +399,7 @@ const useGemFarmStaking = (farmId: string) => {
       await connection.confirmTransaction(txSig)
 
       await fetchFarmerAccount(gemFarmClient, gemBankClient)
-      // await refetchNFTs()
+      await fetchNFTs()
 
     } catch (e) {
       console.error(e);
