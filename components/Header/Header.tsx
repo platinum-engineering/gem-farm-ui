@@ -64,7 +64,7 @@ const Header = ({ onClick }: Props) => {
       <div className={s.left}>
         <img className={s.logo} src="/images/logo.png" alt="Astrobabies" />
         <div className={s.logoText}>
-          Astro Babies
+          <a href='https://astrobabies.io'>Astro Babies</a>
         </div>
       </div>
       <nav className={s.right}>
