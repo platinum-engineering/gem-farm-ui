@@ -68,11 +68,11 @@ const Header = ({ onClick }: Props) => {
         </div>
       </div>
       <nav className={s.right}>
-        <div className={s.rightItem}>Tesla Giveaway</div>
-        <div className={s.rightItem}>Minting</div>
-        <div className={s.rightItem}>Litepaper</div>
-        <div className={s.rightItem}>Press</div>
-        <div className={s.rightItem}>FAQ</div>
+        <div className={s.rightItem}><a href='https://astrobabies.io/#tesla'>Tesla Giveaway</a></div>
+        <div className={s.rightItem}><a href='http://mint.astrobabies.io/'>Minting</a></div>
+        <div className={s.rightItem}><a href='https://astrobabies.io/#whitepaper'>Litepaper</a></div>
+        <div className={s.rightItem}><a href='https://astrobabies.io/index.php/press-release/'>Press</a></div>
+        <div className={s.rightItem}><a href='https://astrobabies.io/#faq'>FAQ</a></div>
         <div className={s.rightItem}>
           <WalletMultiButton className={s.button} />
         </div>
