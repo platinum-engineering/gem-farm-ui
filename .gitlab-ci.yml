@@ -52,4 +52,4 @@ nginx-prod:
     - sudo nginx -t || ( test_result=$? && rm -f /etc/nginx/sites-enabled/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME} && exit ${test_result} )
     - sudo systemctl reload nginx
     # debug information
-    - j2 .info.json.j2 -o ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}/info.json
+    # - j2 .info.json.j2 -o ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}/info.json
