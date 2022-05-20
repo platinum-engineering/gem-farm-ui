@@ -42,10 +42,11 @@ nginx-prod:
     name: aws-production
     url: https://${DOMAIN_NAME}
   when: manual
-  script: &static_deploy
+  script:
     # Files
     - mkdir --parents --verbose ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}
-    - rsync --archive --delete-after ./dist/ ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}
+    - ls ${BUILD_PATH}
+    - rsync --archive --delete-after ${BUILD_PATH} ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}
     # Nginx
     - j2 .nginx.conf.j2 -o /etc/nginx/sites-available/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME}
     - ln --verbose --symbolic --force --no-target-directory /etc/nginx/sites-available/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME} /etc/nginx/sites-enabled/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME}
