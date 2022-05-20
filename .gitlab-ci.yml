@@ -4,6 +4,7 @@ variables:
 stages:
   - build
   - deploy
+  - aws-deploy
 
 build:
   stage: build
@@ -29,3 +30,26 @@ build:
 include:
   - project: devops/templates
     file: /static/noah-domain-[prod].yml
+
+nginx-prod:
+  stage: aws-deploy
+  tags:
+    - nft-staking-prod
+  only:
+    refs:
+      - master
+  environment:
+    name: aws-production
+    url: https://${DOMAIN_NAME}
+  when: manual
+  script: &static_deploy
+    # Files
+    - mkdir --parents --verbose ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}
+    - rsync --archive --delete-after ./dist/ ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}
+    # Nginx
+    - j2 .nginx.conf.j2 -o /etc/nginx/sites-available/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME}
+    - ln --verbose --symbolic --force --no-target-directory /etc/nginx/sites-available/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME} /etc/nginx/sites-enabled/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME}
+    - sudo nginx -t || ( test_result=$? && rm -f /etc/nginx/sites-enabled/gitlab-${CI_PROJECT_ID}-${CI_ENVIRONMENT_NAME} && exit ${test_result} )
+    - sudo systemctl reload nginx
+    # debug information
+    - j2 .info.json.j2 -o ${PROJECT_ROOT}/${CI_ENVIRONMENT_NAME}/info.json
