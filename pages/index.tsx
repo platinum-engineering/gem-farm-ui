@@ -159,21 +159,6 @@ const StakePage = () => {
 
         {!!publicKey && !!farmerAccount && farmerAccount?.identity &&
         <div className={s.containerStaking}>
-          <div className={s.buttons}>
-            <Dropdown
-            items={[
-              { key: 'devnet', name: 'DEVNET' },
-              { key: 'mainnet', name: 'MAINNET' },
-            ]}
-            value={network}
-            onChange={handleChangeNetwork}
-            >
-              <button className={s.button}>{NetworksNames[network]}</button>
-            </Dropdown>
-            <WalletMultiButton className={s.button}>
-              PHANTOM
-            </WalletMultiButton>
-          </div>
           <div className={s.form}>
             <img className={s.nft} src="/images/nft.png" alt="NFT"/>
             <p>Staked farmer count: {farmAccount?.stakedFarmerCount?.toNumber() || 0}</p>
