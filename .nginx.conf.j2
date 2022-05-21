@@ -25,4 +25,9 @@ server {
   access_log                /var/log/nginx/gitlab-{{ CI_PROJECT_ID }}-{{ CI_ENVIRONMENT_NAME }}_access.log;
   error_log                 /var/log/nginx/gitlab-{{ CI_PROJECT_ID }}-{{ CI_ENVIRONMENT_NAME }}_error.log;
 
+  listen 443 ssl; # managed by Certbot
+  ssl_certificate /etc/letsencrypt/live/{{ DOMAIN_NAME }}/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/{{ DOMAIN_NAME }}/privkey.pem; # managed by Certbot
+  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 }
