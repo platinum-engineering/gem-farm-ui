@@ -72,7 +72,10 @@ const StakePage = () => {
     [availableA]
   );
   const stakesEnoughTime = useMemo(
-    () => (Date.now() / 1000) - farmerAccount?.rewardA.fixedRate.beginStakingTs.toNumber() >  1728000,
+    () => {
+      const beganStakingAt = farmerAccount?.rewardA?.fixedRate?.beginStakingTs?.toNumber();
+      return !!beganStakingAt ? (Date.now() / 1000) - beganStakingAt >  1728000 : beganStakingAt;
+    },
     [farmerAccount]
   );
 
