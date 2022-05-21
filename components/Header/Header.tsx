@@ -22,7 +22,6 @@ const Header = ({ onClick }: Props) => {
   useOnClickOutside([refMobileMenu, refMenuButton], () => setOpen(false))
 
   const { publicKey } = useWallet();
-  console.log(publicKey);
 
   if (isMobile) return (
   <header className={s.header} onClick={onClick}>
