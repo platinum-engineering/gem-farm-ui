@@ -75,7 +75,6 @@ const StakePage = () => {
     () => (Date.now() / 1000) - farmerAccount?.rewardA.fixedRate.beginStakingTs.toNumber() >  1728000,
     [farmerAccount]
   );
-  console.log(stakesEnoughTime);
 
   return (
     <div className={theme}>
@@ -258,7 +257,7 @@ const StakePage = () => {
 
             <button
             onClick={handleClaimButtonClick}
-            disabled={!Number(availableA) || !Number(beganStaking)}
+            disabled={!Number(availableA) || !Boolean(stakesEnoughTime)}
             >
               CLAIM {availableToClaim}
             </button>
