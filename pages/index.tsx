@@ -61,21 +61,21 @@ const StakePage = () => {
 
   const [theme] = useState('theme-main')
 
-  const [network, setNetwork] = useGlobal<string, (value: string) => void>(
-  (state: MyState) => state.network,
-  (actions: MyAssociatedActions) => actions.setNetwork
-  );
-  const handleChangeNetwork = (value: string | number) => {
-    setNetwork(value)
-  }
-
   const [mode, setMode] = useState('home')
   const modes = {
     home: mode === 'home',
     connect: mode === 'connect',
   }
 
-  const availableToClaim = useMemo(() => numeral((availableA / 1000000).toFixed(2)).format('0,0.00'), [availableA]);
+  const availableToClaim = useMemo(
+    () => numeral((availableA / 1000000).toFixed(2)).format('0,0.00'),
+    [availableA]
+  );
+  const stakesEnoughTime = useMemo(
+    () => (Date.now() / 1000) - farmerAccount?.rewardA.fixedRate.beginStakingTs.toNumber() >  1728000,
+    [farmerAccount]
+  );
+  console.log(stakesEnoughTime);
 
   return (
     <div className={theme}>
@@ -258,7 +258,7 @@ const StakePage = () => {
 
             <button
             onClick={handleClaimButtonClick}
-            disabled={!Number(availableA)}
+            disabled={!Number(availableA) || !Number(beganStaking)}
             >
               CLAIM {availableToClaim}
             </button>
@@ -284,12 +284,6 @@ const StakePage = () => {
             <div>Claimed rewards:</div>
             <h1 className={s.h1}>{farmerAccount?.rewardA?.paidOutReward / (10 ** 6) || 0}</h1>
           </div>
-          <button
-          onClick={handleClaimButtonClick}
-          disabled={!Number(availableA)}
-          >
-            CLAIM {availableToClaim}
-          </button>
           <img className={s.nftLeft} src="/images/1.png" alt="NFT"/>
           <img className={s.nftRight} src="/images/2.png" alt="NFT"/>
         </section>

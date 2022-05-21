@@ -69,10 +69,13 @@ export async function getNFTMetadataForMany(
     })
     // @ts-ignore
     const arrayForFilter = nftsOnchainMetadata.map((item) => !!item.value &&
-    // @ts-ignore
-    item.value.data.data.name.includes('OG Astro Baby') &&
-    // @ts-ignore
-    item.value.data.data.symbol === 'OG')
+      // @ts-ignore
+      (item.value.data.data.name.includes('OG Astro Baby') ||
+      item.value.data.data.name.includes('Astro Baby Ape')) &&
+      // @ts-ignore
+      (item.value.data.data.symbol === 'OG' ||
+      item.value.data.data.symbol === 'ABA')
+    );
     const nftsOnchainMetadataFiltered = nftsOnchainMetadata.filter((item, i) => arrayForFilter[i])
     const tokensFiltered = tokens.filter((item, i) => arrayForFilter[i])
 

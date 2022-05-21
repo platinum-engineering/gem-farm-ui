@@ -2,12 +2,7 @@
 # Environment: {{ CI_ENVIRONMENT_NAME|default('') }}
 
 server {
-  listen                    80;
   server_name               {{ DOMAIN_NAME }};
-
-  if ($http_x_forwarded_proto = "http") {
-    return 301 https://{{ DOMAIN_NAME }}$request_uri;
-  }
   
   root {{ PROJECT_ROOT }}/{{ CI_ENVIRONMENT_NAME }};
 
@@ -32,4 +27,18 @@ server {
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
   {% endif %}
+}
+
+server {
+    if ($host = {{ DOMAIN_NAME }}) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    if ($http_x_forwarded_proto = "http") {
+      return 301 https://{{ DOMAIN_NAME }}$request_uri;
+    }
+
+  listen                    80;
+  server_name               {{ DOMAIN_NAME }};
+    return 404; # managed by Certbot
 }
