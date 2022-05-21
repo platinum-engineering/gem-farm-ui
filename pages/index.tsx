@@ -124,9 +124,7 @@ const StakePage = () => {
 
         {!!modes.connect && !publicKey &&
         <section className={s.section}>
-          <WalletMultiButton className={s.button}>
-            Choose wallet...
-          </WalletMultiButton>
+          <WalletMultiButton className={s.button}/>
           <div className={s.form}>
             <img className={s.nft} src="/images/nft.png" alt="NFT"/>
             <p>CONNECT YOUR WALLET</p>

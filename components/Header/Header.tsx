@@ -5,6 +5,7 @@ import useWindowSize from '../../hooks/useWindowSize'
 import useOnClickOutside from '../../hooks/useOnClickOutside'
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWallet } from '@solana/wallet-adapter-react';
 
 type Props = {
   onClick?: any
@@ -19,6 +20,9 @@ const Header = ({ onClick }: Props) => {
   const refMenuButton = useRef(null);
   const refMobileMenu = useRef(null);
   useOnClickOutside([refMobileMenu, refMenuButton], () => setOpen(false))
+
+  const { publicKey } = useWallet();
+  console.log(publicKey);
 
   if (isMobile) return (
   <header className={s.header} onClick={onClick}>
@@ -43,9 +47,9 @@ const Header = ({ onClick }: Props) => {
       {open &&
       <div ref={refMobileMenu} className={s.mobileMenu}>
         <div>
-          <div className={s.mobileMenuItem}>
-            <WalletMultiButton className={s.button} />
-          </div>
+            <div className={s.mobileMenuItem}>
+              <WalletMultiButton className={s.button} />
+            </div>
           <div className={s.mobileMenuItem}>Tesla Giveaway</div>
           <div className={s.mobileMenuItem}>Minting</div>
           <div className={s.mobileMenuItem}>Litepaper</div>
@@ -66,16 +70,18 @@ const Header = ({ onClick }: Props) => {
         <div className={s.logoText}>
           <a href='https://astrobabies.io'>Astro Babies</a>
         </div>
+        <div className={s.leftItem}><a href='https://astrobabies.io/#tesla'>Tesla Giveaway</a></div>
+        <div className={s.leftItem}><a href='http://mint.astrobabies.io/'>Minting</a></div>
+        <div className={s.leftItem}><a href='https://astrobabies.io/#whitepaper'>Litepaper</a></div>
+        <div className={s.leftItem}><a href='https://astrobabies.io/index.php/press-release/'>Press</a></div>
+        <div className={s.leftItem}><a href='https://astrobabies.io/#faq'>FAQ</a></div>
       </div>
       <nav className={s.right}>
-        <div className={s.rightItem}><a href='https://astrobabies.io/#tesla'>Tesla Giveaway</a></div>
-        <div className={s.rightItem}><a href='http://mint.astrobabies.io/'>Minting</a></div>
-        <div className={s.rightItem}><a href='https://astrobabies.io/#whitepaper'>Litepaper</a></div>
-        <div className={s.rightItem}><a href='https://astrobabies.io/index.php/press-release/'>Press</a></div>
-        <div className={s.rightItem}><a href='https://astrobabies.io/#faq'>FAQ</a></div>
-        <div className={s.rightItem}>
-          <WalletMultiButton className={s.button} />
-        </div>
+      {!!publicKey &&
+          <div className={s.rightItem}>
+            <WalletMultiButton className={s.button} />
+          </div>
+        }
       </nav>
     </div>
   </header>
