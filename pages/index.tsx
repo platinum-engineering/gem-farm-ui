@@ -75,10 +75,7 @@ const StakePage = () => {
     connect: mode === 'connect',
   }
 
-  const availableToClaim = useMemo(() => numeral((availableA / 1000000000).toFixed(2)).format('0,0.00'), [availableA]);
-  const variableReward = useMemo(() => {
-    return numeral((farmerAccount?.rewardA?.variableRate?.lastRecordedAccruedRewardPerRarityPoint?.n || 0) / 10 ** 3).format('0,0.00')
-  }, [farmerAccount]);
+  const availableToClaim = useMemo(() => numeral((availableA / 1000000).toFixed(2)).format('0,0.00'), [availableA]);
 
   return (
     <div className={theme}>
@@ -279,10 +276,6 @@ const StakePage = () => {
             </div>
           </div>
           <h2 className={s.h2}>Astro Babies Staked: {farmerAccount?.gemsStaked?.toNumber() || 0}</h2>
-          <div className={s.variableReward}>
-            <div>Variable reward</div>
-            <div>Last recorded: {variableReward}</div>
-          </div>
           <div className={s.rewards}>
             <div>Total rewards:</div>
             <h1 className={s.h1}>{farmerAccount?.rewardA?.accruedReward.toNumber() || 0}</h1>
